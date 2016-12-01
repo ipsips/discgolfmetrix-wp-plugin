@@ -19,7 +19,7 @@ function build() {
 function watch() {
   livereload.listen()
 
-  gulp.watch('scripts/skoorin.js', (evt) =>
+  gulp.watch(['scripts/**/*.js', 'styles/**/*.css', '**/*.php'], (evt) =>
     livereload.changed(evt.path)
   )
 
