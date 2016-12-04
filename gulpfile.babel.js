@@ -1,10 +1,13 @@
-import gulp                     from 'gulp'
-import livereload               from 'gulp-livereload'
-import gutil                    from 'gulp-util'
-import webpack                  from 'webpack'
-import webpackStream            from 'webpack-stream'
-import ExtractTextPlugin        from 'extract-text-webpack-plugin'
-import OptimizeCssAssetsPlugin  from 'optimize-css-assets-webpack-plugin'
+import autoprefixer   from 'autoprefixer'
+import gulp           from 'gulp'
+import livereload     from 'gulp-livereload'
+import postcss        from 'gulp-postcss'
+import sass           from 'gulp-sass'
+import sourcemaps     from 'gulp-sourcemaps'
+import gutil          from 'gulp-util'
+import merge          from 'merge-stream'
+import webpack        from 'webpack'
+import webpackStream  from 'webpack-stream'
 
 const PRODUCTION = process.argv.indexOf('--production') > -1
 
@@ -13,42 +16,60 @@ gulp.task('watch', watch)
 gulp.task('default', ['watch'])
 
 function build() {
-  return compile(getWebpackBaseConfig())
+  return merge(
+    styles(),
+    scripts(getWebpackBaseConfig())
+  )
 }
 
 function watch() {
   livereload.listen()
 
-  gulp.watch(['scripts/**/*.js', 'styles/**/*.css', '**/*.php'], (evt) =>
+  gulp.watch('styles/*.scss', styles);
+  gulp.watch(['scripts/*.js', 'styles/**/*.css', '**/*.php'], (evt) =>
     livereload.changed(evt.path)
   )
 
-  return compile({
-    ...getWebpackBaseConfig(),
-    watch: true
-  })
+  return merge(
+    styles(),
+    scripts({
+      ...getWebpackBaseConfig(),
+      watch: true
+    })
+  )
 }
 
-function compile(config) {
+function styles() {
+  return gulp.src('styles/*.scss')
+    .pipe(sourcemaps.init())
+    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+    .pipe(postcss([autoprefixer(/* project-wide options are in browserslist file in project root */)]))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('styles'))
+}
+
+function scripts(config) {
   return webpackStream(config)
-    .on('error', error)
+    .on('error', function (err) {
+      console.error(err.stack || err)
+      this.emit('end')
+    })
     .pipe(gulp.dest('scripts'))
 }
 
 function getWebpackBaseConfig() {
-  const cssLoader = `css?sourceMap&modules&importLoaders=2&localIdentName=[name]_[local]_[hash:base64:6]!postcss!sass?sourceMap`
-
-  return {
-    entry: './scripts/src/index.js',
+  const config = {
     target: 'web',
-    output: {
-      filename: 'skoorin.js'
-    },
     plugins: [
-      new webpack.DefinePlugin({ PRODUCTION }),
-      new webpack.optimize.UglifyJsPlugin(),
-      new ExtractTextPlugin('../styles/skoorin.css'),
-      new OptimizeCssAssetsPlugin()
+      new webpack.DefinePlugin({
+        PRODUCTION,
+        /**
+         * Keeping it "production" for Redux
+         * @see https://github.com/reactjs/redux/issues/1029
+         */
+        'process.env.NODE_ENV': JSON.stringify('production')
+      }),
+      new webpack.optimize.UglifyJsPlugin()
     ],
     module: {
       loaders: [{
@@ -56,25 +77,26 @@ function getWebpackBaseConfig() {
         loader: 'babel-loader',
         exclude: /node_modules/
       }, {
-        test: /\.scss$/,
-        loader: PRODUCTION
-          ? ExtractTextPlugin.extract('style', cssLoader)
-          : `style!${cssLoader}`
-      }, {
         test: /\.(jpg|jpeg|png|woff|woff2|eot|ttf|svg)/,
         loader: 'url-loader?limit=100000'
       }]
     },
-    devtool: 'source-map',
-    postcss: function () {
-      return [
-        require('autoprefixer')(/* project-wide options are in browserslist file in project root */)
-      ]
-    }
+    devtool: 'source-map'
   }
-}
 
-function error(err) {
-  console.error(err.stack || err)
-  this.emit('end')
+  return {
+    config: [{
+      ...config,
+      entry: './scripts/src/results.js',
+      output: {
+        filename: 'skoorin-results.js'
+      }
+    }, {
+      ...config,
+      entry: './scripts/src/settings.js',
+      output: {
+        filename: 'skoorin-settings.js'
+      }
+    }]
+  }
 }

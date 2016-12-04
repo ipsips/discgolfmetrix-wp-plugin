@@ -1,0 +1,483 @@
+@charset 'utf-8';
+
+$border-color: rgba(black, .2);
+$border-radius: 2px;
+$indent: 16px;
+
+$gold-accent: #FFB400;
+$success-color: #3EC300;
+$alert-color: #F42B03;
+
+@mixin dropdown() {
+  padding: 4px 20px 4px 10px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='32' height='24' viewBox='0 0 32 24'><polygon points='0,0 32,0 16,24' style='fill: black'></polygon></svg>");
+  background-size: 9px 6px;
+  background-position: right -13px center;
+  background-origin: content-box;
+  background-repeat: no-repeat;
+}
+
+.skoorin-select-competition {
+  &:after {
+    content: ' ';
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+  }
+
+  .select {
+    float: left;
+    width: calc(100% - 64px);
+    margin: 0;
+    position: relative;
+    min-width: 0;
+  }
+
+  .selected {
+    border: 1px solid $border-color;
+    background-color: white;
+    border-radius: $border-radius;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @include dropdown;
+  }
+
+  .options {
+    position: absolute;
+    z-index: 999;
+    left: 0;
+    top: 100%;
+    margin-top: -1px;
+    min-width: 100%;
+    max-width: 400px;
+    background-color: white;
+    border-radius: $border-radius;
+    border: 1px solid $border-color;
+    box-shadow: 0 2px 5px rgba(black, .2);
+    padding: 4px;
+    display: none;
+    overflow: hidden;
+  }
+
+  ul.list {
+    list-style: none;
+    padding: 0;
+    margin: 0 -4px;
+
+    ul.list {
+      margin: 0;
+    }
+
+    li {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 1;
+
+      .competition {
+        display: block;
+        padding: 6px 6px 6px $indent;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+        float: left; /* IE11 */
+        width: 100%; /* IE11 */
+
+        &:hover {
+          background-color: rgba(black, .05);
+        }
+
+        &.active {
+          color: black;
+          font-weight: bold;
+          pointer-events: none;
+        }
+      }
+
+      li .competition { padding-left: 2 * $indent; }
+      li li .competition { padding-left: 3 * $indent; }
+      li li li .competition { padding-left: 4 * $indent; }
+      li li li li .competition { padding-left: 5 * $indent; }
+      li li li li li .competition { padding-left: 6 * $indent; }
+      li li li li li li .competition { padding-left: 7 * $indent; }
+      li li li li li li li .competition { padding-left: 8 * $indent; }
+      li li li li li li li li .competition { padding-left: 9 * $indent; }
+      li li li li li li li li li .competition { padding-left: 10 * $indent; }
+      li li li li li li li li li li .competition { padding-left: 11 * $indent; }
+      li li li li li li li li li li li .competition { padding-left: 12 * $indent; }
+
+      li {
+        position: relative;
+        overflow: hidden;
+
+        &:before,
+        &:after {
+          content: '';
+          position: absolute;
+          left: $indent + 4;
+          top: 0;
+          width: 6px;
+          height: $indent;
+          border-style: solid;
+          border-color: $border-color;
+        }
+        
+        &:before {
+          border-width: 0 0 1px 1px;
+        }
+
+        &:after {
+          top: $indent;
+          border-width: 0 0 0 1px;
+        }
+
+        &:last-child:after {
+          display: none;
+        }
+      }
+
+      li li { &:before, &:after { left: 1 * $indent + $indent + 4; } }
+      li li li { &:before, &:after { left: 2 * $indent + $indent + 4; } }
+      li li li li { &:before, &:after { left: 3 * $indent + $indent + 4; } }
+      li li li li li { &:before, &:after { left: 4 * $indent + $indent + 4; } }
+      li li li li li li { &:before, &:after { left: 5 * $indent + $indent + 4; } }
+      li li li li li li li { &:before, &:after { left: 6 * $indent + $indent + 4; } }
+      li li li li li li li li { &:before, &:after { left: 7 * $indent + $indent + 4; } }
+      li li li li li li li li li { &:before, &:after { left: 8 * $indent + $indent + 4; } }
+      li li li li li li li li li li { &:before, &:after { left: 9 * $indent + $indent + 4; } }
+      li li li li li li li li li li li { &:before, &:after { left: 10 * $indent + $indent + 4; } }
+    }
+  }
+
+  .button {
+    float: left;
+    margin: 0 0 0 2px;
+    width: 30px;
+    padding: 4px 0;
+    font-size: inherit;
+    line-height: inherit;
+    text-align: center;
+    color: black;
+    background-color: transparent;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &:hover, 
+    &:focus {
+      color: white;
+      background-color: black;
+    }
+
+    &.disabled {
+      pointer-events: none;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .skoorin-select-competition {
+    .select {
+      width: 100%;
+    }
+    .button {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .skoorin-select-competition {
+    margin: 2px;
+
+    .options {
+      min-width: 200px;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow: auto;
+    }
+  }
+}
+
+/* overlay behind the menu in nvp (<= 640px) */
+.skoorin-select-competition-overlay {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(black, .2);
+  display: none;
+}
+
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-rendering: inherit;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  color: black;
+  background-color: white;
+  appearance: none;
+  @include dropdown;
+}
+select::-ms-expand {
+  display: none;
+}
+
+.skoorin-results-filter {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;  
+
+  >div {
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    &.skoorin-results-filter-control-select-competition {
+      display: inline-flex;
+      justify-content: flex-start;
+      flex-grow: 1;
+      flex-shrink: 5;
+      min-width: 0;
+
+      .skoorin-select-competition {
+        width: 100%;
+      }
+    }
+  }
+
+  + .skoorin-results-table {
+    margin-top: 20px;
+  }
+}
+
+.skoorin-results-table {
+  min-height: 32px;
+
+  >div {
+    transition: opacity .2s;
+  }
+
+  &.loading {
+    position: relative;
+    cursor: wait;
+
+    >div {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .spinner {
+      display: block;
+    }
+  }
+
+  .spinner {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px;
+
+    i {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: currentColor;
+      opacity: .5;
+      position: absolute;
+      top: 0;
+      left: 0;
+      animation: spinner 2s infinite ease-in-out;
+
+      &:last-child {
+        animation-delay: -1s;
+      }
+    }
+  }
+
+  table {
+    font-size: 14px;
+
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 3px;
+        padding-right: 3px;
+        text-align: center;
+        white-space: nowrap;
+      }
+    }
+
+    thead {
+      th, td {
+        &.hole,
+        &.par {
+          text-align: right;
+        }
+      }
+    }
+
+    tbody {
+      td.standing {
+        text-align: right;
+      }
+
+      td.player {
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 160px;
+
+        a > i {
+          font-style: normal;
+
+          &:before {
+            content: '▷';
+          }
+        }
+      }
+
+      td.hole-in-one {
+        background-color: $gold-accent;
+      }
+
+      td.eagle {
+        background-color: $success-color;
+      }
+
+      td.birdie {
+        background-color: rgba($success-color, .4);
+      }
+
+      td.bogey {
+        background-color: rgba($alert-color, .2);
+      }
+
+      td.double-bogey {
+        background-color: rgba($alert-color, .4);
+      }
+
+      td.fail {
+        background-color: rgba($alert-color, .6);
+      }
+
+      td.ob {
+        position:relative;
+
+        /* &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+
+          background: linear-gradient(
+            to top left,
+            rgba($alert-color, 0) 0%,
+            rgba($alert-color, 0) calc(50% - 1px),
+            rgba($alert-color, 1) 50%,
+            rgba($alert-color, 0) calc(50% + 1px),
+            rgba($alert-color, 0) 100%
+          );
+        } */
+
+        &:before {
+          position: absolute;
+          left: 0;
+          top: 0;
+          content: '';
+          width: 100%;
+          height: 4px;
+          background-color: $alert-color;
+        }
+      }
+
+      tr.expanded {
+        td.player a > i:before {
+          content: '▽';
+        }
+
+        ~ tr.extra {
+          display: table-row;
+        }
+      }
+
+      tr.extra {
+        display: none;
+
+        td {
+          font-size: .86em;
+
+          &:first-child {
+            text-align: right;
+          }
+
+          img.emoji {
+            width: .7em !important;
+            max-width: .7em;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes spinner {
+  0%, 100% { transform: scale(0); }
+  50% { transform: scale(1); }
+}
+
+@media (min-width: 800px) {
+  .skoorin-results-table table {
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+    }
+  }
+}
+
+@media (min-width: 960px) {
+  .skoorin-results-table table {
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
+  }
+}
+
+.table-scroll {
+  overflow-x: auto;
+
+  > table {
+    width: auto;
+    margin: 0 !important;
+  }
+}
