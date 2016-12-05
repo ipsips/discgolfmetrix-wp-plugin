@@ -2,7 +2,7 @@ import autoprefixer   from 'autoprefixer'
 import gulp           from 'gulp'
 import livereload     from 'gulp-livereload'
 import postcss        from 'gulp-postcss'
-import readmeToMD     from 'gulp-readme-to-markdown'
+// import readmeToMD     from 'gulp-readme-to-markdown'
 import rename         from 'gulp-rename'
 import sass           from 'gulp-sass'
 import sourcemaps     from 'gulp-sourcemaps'
@@ -13,9 +13,9 @@ import webpackStream  from 'webpack-stream'
 
 const PRODUCTION = process.argv.indexOf('--production') > -1
 
-gulp.task('readme', readme)
-gulp.task('build', ['readme'], build)
-gulp.task('watch', ['readme'], watch)
+// gulp.task('readme', readme)
+gulp.task('build', /*['readme'], */build)
+gulp.task('watch', /*['readme'], */watch)
 gulp.task('default', ['watch'])
 
 function build() {
@@ -28,7 +28,7 @@ function build() {
 function watch() {
   livereload.listen()
 
-  gulp.watch('skoorin/readme.txt', readme)
+  // gulp.watch('skoorin/readme.txt', readme)
   gulp.watch('styles/*.scss', styles)
   gulp.watch(['skoorin/scripts/*.js', 'skoorin/styles/**/*.css', 'skoorin/**/*.php'], (evt) =>
     livereload.changed(evt.path)
@@ -106,11 +106,21 @@ function getWebpackBaseConfig() {
   }
 }
 
-function readme() {
-  gulp.src('skoorin/readme.txt')
+/*function readme() {
+  return gulp
+    .src('skoorin/readme.txt')
     .pipe(readmeToMD({
       screenshot_url: 'screenshots/{screenshot}.{ext}',
-      screenshot_ext: 'jpg'
+      screenshot_ext: 'gif',
+      extract: {}
     }))
     .pipe(gulp.dest('.'))
-}
+
+  /* add screenshots to README.md manually:
+  ![](skoorin/screenshot-1.gif)<br>
+  1. Results table with filter
+
+  ![](skoorin/screenshot-2.gif)<br>
+  2. Results filter options
+  *
+}*/

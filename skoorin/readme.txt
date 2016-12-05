@@ -9,6 +9,11 @@ License URI: https://www.apache.org/licenses/LICENSE-2.0.txt
 
 Embed skoorin.com content into wordpress
 
+== Screenshots ==
+
+1. Results table with filter
+2. Results filter settings
+
 == Installation ==
 
 1. Copy the plugin folder into your `wp-content/plugins` folder
