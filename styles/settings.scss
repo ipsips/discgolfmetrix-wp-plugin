@@ -1,0 +1,44 @@
+@charset 'utf-8';
+
+@import 'variables-and-mixins';
+@import 'results-filter';
+
+#skoorin-options {
+  h4 {
+    margin-bottom: .2em;
+  }
+
+  .skoorin-results-filter {
+    box-sizing: content-box;
+    min-height: 28px;
+    padding: 10px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(black, .04);
+    background: white;
+    @include disable-user-select;
+
+    +.skoorin-results-filter {
+      margin-top: 1em;
+    }
+  }
+
+  select {
+    margin: 0;
+  }
+
+  .skoorin-select-competition,
+  select {
+    pointer-events: none;
+  }
+
+  [class^="skoorin-results-filter-control"] {
+    cursor: grab;
+  }
+}
+
+@media screen and (max-width: 782px) {
+  #skoorin-options select {
+    height: auto;
+    font-size: inherit;
+  }
+}

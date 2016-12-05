@@ -76,14 +76,14 @@ class SkoorinResults {
     return {
       loading: false,
       data,
-      filters: this.initFilters(data.filters)
+      filters: this.initFilters(data.filters_selected, data.filters)
     }
   }
-  initFilters = (filters) => {
+  initFilters = (filtersSelected, filters) => {
     const state = {}
     this.filters = {}
 
-    for (let name in filters)
+    filtersSelected.forEach(name => {
       if (name != 'competition') {
         const filter = this.results.querySelector(`select[name="${name}"]`)
 
@@ -99,13 +99,12 @@ class SkoorinResults {
           })
         })
       }
+    })
 
     return state
   }
   onStateChange = () => {
     this.state = this.store.getState()
-
-    console.log('this.state:', this.state)
 
     this.renderTable()
 

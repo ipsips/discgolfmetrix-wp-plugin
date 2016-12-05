@@ -2,6 +2,8 @@ import autoprefixer   from 'autoprefixer'
 import gulp           from 'gulp'
 import livereload     from 'gulp-livereload'
 import postcss        from 'gulp-postcss'
+import readmeToMD     from 'gulp-readme-to-markdown'
+import rename         from 'gulp-rename'
 import sass           from 'gulp-sass'
 import sourcemaps     from 'gulp-sourcemaps'
 import gutil          from 'gulp-util'
@@ -11,8 +13,9 @@ import webpackStream  from 'webpack-stream'
 
 const PRODUCTION = process.argv.indexOf('--production') > -1
 
-gulp.task('build', build)
-gulp.task('watch', watch)
+gulp.task('readme', readme)
+gulp.task('build', ['readme'], build)
+gulp.task('watch', ['readme'], watch)
 gulp.task('default', ['watch'])
 
 function build() {
@@ -25,8 +28,9 @@ function build() {
 function watch() {
   livereload.listen()
 
-  gulp.watch('styles/*.scss', styles);
-  gulp.watch(['scripts/*.js', 'styles/**/*.css', '**/*.php'], (evt) =>
+  gulp.watch('skoorin/readme.txt', readme)
+  gulp.watch('styles/*.scss', styles)
+  gulp.watch(['skoorin/scripts/*.js', 'skoorin/styles/**/*.css', 'skoorin/**/*.php'], (evt) =>
     livereload.changed(evt.path)
   )
 
@@ -40,12 +44,13 @@ function watch() {
 }
 
 function styles() {
-  return gulp.src('styles/*.scss')
+  return gulp.src('styles/[^_]*.scss')
+    .pipe(rename(path => path.basename = `skoorin-${path.basename}`))
     .pipe(sourcemaps.init())
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(postcss([autoprefixer(/* project-wide options are in browserslist file in project root */)]))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('styles'))
+    .pipe(gulp.dest('skoorin/styles'))
 }
 
 function scripts(config) {
@@ -54,7 +59,7 @@ function scripts(config) {
       console.error(err.stack || err)
       this.emit('end')
     })
-    .pipe(gulp.dest('scripts'))
+    .pipe(gulp.dest('skoorin/scripts'))
 }
 
 function getWebpackBaseConfig() {
@@ -87,16 +92,25 @@ function getWebpackBaseConfig() {
   return {
     config: [{
       ...config,
-      entry: './scripts/src/results.js',
+      entry: './scripts/results.js',
       output: {
         filename: 'skoorin-results.js'
       }
     }, {
       ...config,
-      entry: './scripts/src/settings.js',
+      entry: './scripts/settings.js',
       output: {
         filename: 'skoorin-settings.js'
       }
     }]
   }
+}
+
+function readme() {
+  gulp.src('skoorin/readme.txt')
+    .pipe(readmeToMD({
+      screenshot_url: 'screenshots/{screenshot}.{ext}',
+      screenshot_ext: 'jpg'
+    }))
+    .pipe(gulp.dest('.'))
 }

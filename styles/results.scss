@@ -1,0 +1,220 @@
+@charset 'utf-8';
+
+@import 'variables-and-mixins';
+@import 'results-filter';
+
+.skoorin-results-table {
+  min-height: 32px;
+
+  >div {
+    transition: opacity .2s;
+  }
+
+  &.loading {
+    position: relative;
+    cursor: wait;
+
+    >div {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .spinner {
+      display: block;
+    }
+  }
+
+  .spinner {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px;
+
+    i {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: currentColor;
+      opacity: .5;
+      position: absolute;
+      top: 0;
+      left: 0;
+      animation: spinner 2s infinite ease-in-out;
+
+      &:last-child {
+        animation-delay: -1s;
+      }
+    }
+  }
+
+  table {
+    font-size: 14px;
+
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 3px;
+        padding-right: 3px;
+        text-align: center;
+        white-space: nowrap;
+      }
+    }
+
+    thead {
+      th, td {
+        &.hole,
+        &.par {
+          text-align: right;
+        }
+      }
+    }
+
+    tbody {
+      td.standing {
+        text-align: right;
+      }
+
+      td.player {
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 160px;
+
+        a > i {
+          font-style: normal;
+
+          &:before {
+            content: '▷';
+          }
+        }
+      }
+
+      td.hole-in-one {
+        background-color: $gold-accent;
+      }
+
+      td.eagle {
+        background-color: $success-color;
+      }
+
+      td.birdie {
+        background-color: rgba($success-color, .4);
+      }
+
+      td.bogey {
+        background-color: rgba($alert-color, .2);
+      }
+
+      td.double-bogey {
+        background-color: rgba($alert-color, .4);
+      }
+
+      td.fail {
+        background-color: rgba($alert-color, .6);
+      }
+
+      td.ob {
+        position:relative;
+
+        /* &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+
+          background: linear-gradient(
+            to top left,
+            rgba($alert-color, 0) 0%,
+            rgba($alert-color, 0) calc(50% - 1px),
+            rgba($alert-color, 1) 50%,
+            rgba($alert-color, 0) calc(50% + 1px),
+            rgba($alert-color, 0) 100%
+          );
+        } */
+
+        &:before {
+          position: absolute;
+          left: 0;
+          top: 0;
+          content: '';
+          width: 100%;
+          height: 4px;
+          background-color: $alert-color;
+        }
+      }
+
+      tr.expanded {
+        td.player a > i:before {
+          content: '▽';
+        }
+
+        ~ tr.extra {
+          display: table-row;
+        }
+      }
+
+      tr.extra {
+        display: none;
+
+        td {
+          font-size: .86em;
+
+          &:first-child {
+            text-align: right;
+          }
+
+          img.emoji {
+            width: .7em !important;
+            max-width: .7em;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes spinner {
+  0%, 100% { transform: scale(0); }
+  50% { transform: scale(1); }
+}
+
+@media (min-width: 800px) {
+  .skoorin-results-table table {
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+    }
+  }
+}
+
+@media (min-width: 960px) {
+  .skoorin-results-table table {
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
+  }
+}
+
+.table-scroll {
+  overflow-x: auto;
+
+  > table {
+    width: auto;
+    margin: 0 !important;
+  }
+}

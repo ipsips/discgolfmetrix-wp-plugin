@@ -1,21 +1,6 @@
 @charset 'utf-8';
 
-$border-color: rgba(black, .2);
-$border-radius: 2px;
-$indent: 16px;
-
-$gold-accent: #FFB400;
-$success-color: #3EC300;
-$alert-color: #F42B03;
-
-@mixin dropdown() {
-  padding: 4px 20px 4px 10px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='32' height='24' viewBox='0 0 32 24'><polygon points='0,0 32,0 16,24' style='fill: black'></polygon></svg>");
-  background-size: 9px 6px;
-  background-position: right -13px center;
-  background-origin: content-box;
-  background-repeat: no-repeat;
-}
+@import 'variables-and-mixins';
 
 .skoorin-select-competition {
   &:after {
@@ -195,8 +180,6 @@ $alert-color: #F42B03;
 
 @media (max-width: 640px) {
   .skoorin-select-competition {
-    margin: 2px;
-
     .options {
       min-width: 200px;
       max-width: 90vw;
@@ -218,26 +201,9 @@ $alert-color: #F42B03;
   display: none;
 }
 
-select {
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  text-rendering: inherit;
-  overflow: hidden;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  color: black;
-  background-color: white;
-  appearance: none;
-  @include dropdown;
-}
-select::-ms-expand {
-  display: none;
-}
-
 .skoorin-results-filter {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: nowrap;  
 
   >div {
@@ -264,220 +230,22 @@ select::-ms-expand {
   + .skoorin-results-table {
     margin-top: 20px;
   }
-}
 
-.skoorin-results-table {
-  min-height: 32px;
-
-  >div {
-    transition: opacity .2s;
+  select {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    text-rendering: inherit;
+    overflow: hidden;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    color: black;
+    background-color: white;
+    appearance: none;
+    @include dropdown;
   }
 
-  &.loading {
-    position: relative;
-    cursor: wait;
-
-    >div {
-      opacity: .4;
-      pointer-events: none;
-    }
-
-    .spinner {
-      display: block;
-    }
-  }
-
-  .spinner {
+  select::-ms-expand {
     display: none;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 30px;
-    height: 30px;
-    margin: -15px;
-
-    i {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background-color: currentColor;
-      opacity: .5;
-      position: absolute;
-      top: 0;
-      left: 0;
-      animation: spinner 2s infinite ease-in-out;
-
-      &:last-child {
-        animation-delay: -1s;
-      }
-    }
-  }
-
-  table {
-    font-size: 14px;
-
-    thead,
-    tbody,
-    tfoot {
-      th, td {
-        padding-left: 3px;
-        padding-right: 3px;
-        text-align: center;
-        white-space: nowrap;
-      }
-    }
-
-    thead {
-      th, td {
-        &.hole,
-        &.par {
-          text-align: right;
-        }
-      }
-    }
-
-    tbody {
-      td.standing {
-        text-align: right;
-      }
-
-      td.player {
-        text-align: left;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 160px;
-
-        a > i {
-          font-style: normal;
-
-          &:before {
-            content: '▷';
-          }
-        }
-      }
-
-      td.hole-in-one {
-        background-color: $gold-accent;
-      }
-
-      td.eagle {
-        background-color: $success-color;
-      }
-
-      td.birdie {
-        background-color: rgba($success-color, .4);
-      }
-
-      td.bogey {
-        background-color: rgba($alert-color, .2);
-      }
-
-      td.double-bogey {
-        background-color: rgba($alert-color, .4);
-      }
-
-      td.fail {
-        background-color: rgba($alert-color, .6);
-      }
-
-      td.ob {
-        position:relative;
-
-        /* &:before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-
-          background: linear-gradient(
-            to top left,
-            rgba($alert-color, 0) 0%,
-            rgba($alert-color, 0) calc(50% - 1px),
-            rgba($alert-color, 1) 50%,
-            rgba($alert-color, 0) calc(50% + 1px),
-            rgba($alert-color, 0) 100%
-          );
-        } */
-
-        &:before {
-          position: absolute;
-          left: 0;
-          top: 0;
-          content: '';
-          width: 100%;
-          height: 4px;
-          background-color: $alert-color;
-        }
-      }
-
-      tr.expanded {
-        td.player a > i:before {
-          content: '▽';
-        }
-
-        ~ tr.extra {
-          display: table-row;
-        }
-      }
-
-      tr.extra {
-        display: none;
-
-        td {
-          font-size: .86em;
-
-          &:first-child {
-            text-align: right;
-          }
-
-          img.emoji {
-            width: .7em !important;
-            max-width: .7em;
-          }
-        }
-      }
-    }
-  }
-}
-
-@keyframes spinner {
-  0%, 100% { transform: scale(0); }
-  50% { transform: scale(1); }
-}
-
-@media (min-width: 800px) {
-  .skoorin-results-table table {
-    thead,
-    tbody,
-    tfoot {
-      th, td {
-        padding-left: 6px;
-        padding-right: 6px;
-      }
-    }
-  }
-}
-
-@media (min-width: 960px) {
-  .skoorin-results-table table {
-    thead,
-    tbody,
-    tfoot {
-      th, td {
-        padding-left: 8px;
-        padding-right: 8px;
-      }
-    }
-  }
-}
-
-.table-scroll {
-  overflow-x: auto;
-
-  > table {
-    width: auto;
-    margin: 0 !important;
   }
 }

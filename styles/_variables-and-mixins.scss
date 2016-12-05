@@ -1,0 +1,27 @@
+@charset 'utf-8';
+
+$border-color: rgba(black, .2);
+$border-radius: 2px;
+$indent: 16px;
+
+$gold-accent: #FFB400;
+$success-color: #3EC300;
+$alert-color: #F42B03;
+
+@mixin dropdown() {
+  padding: 4px 20px 4px 10px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='32' height='24' viewBox='0 0 32 24'><polygon points='0,0 32,0 16,24' style='fill: black'></polygon></svg>");
+  background-size: 9px 6px;
+  background-position: right -13px center;
+  background-origin: content-box;
+  background-repeat: no-repeat;
+}
+
+@mixin disable-user-select() {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}

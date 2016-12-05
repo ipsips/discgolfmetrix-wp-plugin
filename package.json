@@ -27,6 +27,8 @@
     "gulp": "^3.9.1",
     "gulp-livereload": "^3.8.1",
     "gulp-postcss": "^6.2.0",
+    "gulp-readme-to-markdown": "^0.2.0",
+    "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.9.1",
     "gulp-util": "^3.0.7",
     "merge-stream": "^1.0.1",

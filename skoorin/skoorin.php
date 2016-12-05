@@ -21,6 +21,14 @@ class Skoorin {
   function __construct() {
     $this->ver = '2.0.0';
     $this->options = get_option('skoorin_options', Skoorin_Settings::get_default_options());
+    $this->defaults = array(
+      'shortcode_results' => array(
+        'competition_id' => 0,
+        'player' => 'all',
+        'class' => 'all',
+        'group' => 'all'
+      )
+    );
     $this->l10n = array(
       'results' => array(
         'all' => array(
@@ -60,7 +68,7 @@ class Skoorin {
   }
 
   function enqueue_scripts_public() {
-    wp_register_style('skoorin-results', plugins_url('styles/skoorin-results.css', __FILE__));
+    wp_register_style('skoorin-results', plugins_url('styles/skoorin-results.css', __FILE__), array(), $this->ver);
     wp_register_script('skoorin-results', plugins_url('scripts/skoorin-results.js', __FILE__), array('jquery'), $this->ver, true);
     wp_localize_script('skoorin-results', 'skoorinResults', array(
       'l10n' => $this->l10n['results'],
@@ -73,12 +81,7 @@ class Skoorin {
   }
   
   function shortcode_results($attributes) {
-    $atts = shortcode_atts(array(
-      'competition_id' => 0,
-      'player' => 'all',
-      'class' => 'all',
-      'group' => 'all'
-    ), $attributes);
+    $atts = shortcode_atts($this->defaults['shortcode_results'], $attributes);
 
     if (!is_numeric($atts['competition_id']))
       return '';
@@ -91,16 +94,16 @@ class Skoorin {
 
       /* filter */
       if (is_array($results_filter) && count($results_filter)) {
-        $filters = $this->api_get(array(
+        $filters = self::api_get(array(
           'content' => 'wordpress_filters',
           'competition_id' => $atts['competition_id']
         ));
 
         $output.= '<div class="skoorin-results-filter">';
 
-        foreach ($results_filter as $filter_control)
+        foreach ($results_filter as $filter_name)
           $output.= call_user_func(
-            get_class()."::get_$filter_control",
+            get_class()."::get_{$filter_name}_filter",
             $filters,
             $atts,
             $this->l10n['results']
@@ -109,14 +112,14 @@ class Skoorin {
         $output.= '</div>';
       }
 
-      $results = $this->api_get(array(
+      $results = self::api_get(array(
         'content' => 'result_json',
         'id' => $atts['competition_id']
       ));
 
       /* results table */
       $table_wrapper_class = 'skoorin-results-table-container'.(
-        $responsive_table
+        isset($responsive_table) && $responsive_table
           ? ' table-scroll table-responsive'
           : ''
       );
@@ -126,7 +129,11 @@ class Skoorin {
 
       /* data for js */
       $output.= '<script type="application/json" class="skoorin-results-data">';
-      $output.= json_encode(array('filters' => $filters, 'results' => $results));
+      $output.= json_encode(array(
+        'filters_selected' => $results_filter,
+        'filters' => $filters,
+        'results' => $results
+      ));
       $output.= '</script>';
     
     $output.= '</div>';
@@ -152,7 +159,7 @@ class Skoorin {
     exit;
   }
 
-  private function api_get($params, $res_type = 'json', $url = 'https://skoorin.com/api.php') {
+  public static function api_get($params, $res_type = 'json', $url = 'https://skoorin.com/api.php') {
     if (!is_array($params))
       return null;
 
@@ -422,6 +429,81 @@ class Skoorin {
           ]
         ];
       case 367747:
+        return [
+          'par_total' => 54,
+          'holes' => [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+          'players' => [
+            [
+              'id' => 6216,
+              'name' => 'Silver Saks',
+              'class' => 'mehed',
+              'group' => 3,
+              'results' => [
+                'throws' => [2, 2, 1, 4, 3, 3, 2, 3, 3, 2, 2, 3, 3, 4, 3, 4, 3, 3],
+                'total' => 48,
+                'to_par' => -6,
+                'ob' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'extra' => [
+                  [
+                    'name' => 'green_hit',
+                    'type' => 'bool',
+                    'holes' => [0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0],
+                    'total' => '44%'
+                  ], [
+                    'name' => 'outside_circle_putt',
+                    'type' => 'bool',
+                    'holes' => [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    'total' => 1
+                  ], [
+                    'name' => 'inside_circle_putts',
+                    'type' => 'number',
+                    'holes' => [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1],
+                    'total' => 0
+                  ], [
+                    'name' => 'penalty',
+                    'type' => 'number',
+                    'holes' => [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                    'total' => 1
+                  ]
+                ]
+              ]
+            ], [
+              'id' => 19443,
+              'name' => 'Ivar Oja',
+              'class' => 'mehed',
+              'group' => 1,
+              'results' => [
+                'throws' => [5, 6, 5, 5, 5, 6, 5, 6, 3, 8, 3, 4, 5, 4, 4, 4, 4, 3],
+                'total' => 85,
+                'to_par' => 31,
+                'ob' => [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                'extra' => [
+                  [
+                    'name' => 'green_hit',
+                    'type' => 'bool',
+                    'holes' => [0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0],
+                    'total' => '44%'
+                  ], [
+                    'name' => 'outside_circle_putt',
+                    'type' => 'bool',
+                    'holes' => [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    'total' => 1
+                  ], [
+                    'name' => 'inside_circle_putts',
+                    'type' => 'number',
+                    'holes' => [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1],
+                    'total' => 0
+                  ], [
+                    'name' => 'penalty',
+                    'type' => 'number',
+                    'holes' => [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                    'total' => 1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ];
       case 367749:
       default:
         return [
@@ -502,13 +584,13 @@ class Skoorin {
     }
   }
 
-  public static function get_select_competition($filters, $atts) {
+  public static function get_competition_filter($filters, $atts) {
     $selected = '';
-    $options = self::get_select_competition_option($filters['competition'], $atts, $selected);
+    $options = self::get_competition_filter_option($filters['competition'], $atts, $selected);
 
     ob_start();
     ?>
-    <div class="skoorin-results-filter-control-select-competition">
+    <div class="skoorin-results-filter-control-select-competition" data-name="competition">
       <div class="skoorin-select-competition">
         <div class="select">
           <div class="selected"><?php echo $selected ?></div>
@@ -526,7 +608,7 @@ class Skoorin {
     return ob_get_clean();
   }
 
-  static function get_select_competition_option($competition, $atts, &$selected) {
+  static function get_competition_filter_option($competition, $atts, &$selected) {
     $is_selected = $competition['id'] == $atts['competition_id'];
     $class = 'competition';
 
@@ -539,7 +621,7 @@ class Skoorin {
       if (array_key_exists('children', $competition) && count($competition['children'])) {
         $output.= '<ul class="list">';
         foreach ($competition['children'] as $child_competition)
-          $output.= self::get_select_competition_option($child_competition, $atts, $selected);
+          $output.= self::get_competition_filter_option($child_competition, $atts, $selected);
         $output.= '</ul>';
       }
     $output.= '</li>';
@@ -547,11 +629,11 @@ class Skoorin {
     return $output;
   }
 
-  public static function get_select_player($filters, $atts, $l10n) {
+  public static function get_player_filter($filters, $atts, $l10n) {
     if (!count($filters['player']))
       return '';
 
-    $output = "<div class='skoorin-results-filter-control-select-player'><select name='player'>";
+    $output = "<div class='skoorin-results-filter-control-select-player' data-name='player'><select name='player'>";
     $output.= '<option value="all" '.($atts['player'] == 'all' ? 'selected' : '').'>'.$l10n['all']['player'].'</option>';
 
     foreach ($filters['player'] as $player)
@@ -562,11 +644,11 @@ class Skoorin {
     return $output;
   }
 
-  public static function get_select_class($filters, $atts, $l10n) {
+  public static function get_class_filter($filters, $atts, $l10n) {
     if (!count($filters['class']))
       return '';
 
-    $output = "<div class='skoorin-results-filter-control-select-class'><select name='class'>";
+    $output = "<div class='skoorin-results-filter-control-select-class' data-name='class'><select name='class'>";
     $output.= '<option value="all" '.($atts['class'] == 'all' ? 'selected' : '').'>'.$l10n['all']['class'].'</option>';
 
     foreach ($filters['class'] as $class)
@@ -577,11 +659,11 @@ class Skoorin {
     return $output;
   }
 
-  public static function get_select_group($filters, $atts, $l10n) {
+  public static function get_group_filter($filters, $atts, $l10n) {
     if (!count($filters['group']))
       return '';
 
-    $output = "<div class='skoorin-results-filter-control-select-group'><select name='group'>";
+    $output = "<div class='skoorin-results-filter-control-select-group' data-name='group'><select name='group'>";
     $output.= '<option value="all" '.($atts['group'] == 'all' ? 'selected' : '').'>'.$l10n['all']['group'].'</option>';
 
     foreach ($filters['group'] as $group)
@@ -672,7 +754,8 @@ class Skoorin {
   }
 }
 
-new Skoorin();
+global $skoorin;
+$skoorin = new Skoorin();
 
 /**
  * Util.
