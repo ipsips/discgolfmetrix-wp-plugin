@@ -133,7 +133,11 @@ class Skoorin {
       <div class="skoorin-results-filter-control-select-competitions" data-name="competitions">
         <div class="skoorin-select-competitions">
           <div class="select">
-            <div class="selected"><?php echo $selected ?></div>
+            <div class="selected">
+              <select>
+                <option><?php echo $selected ?></option>
+              </select>
+            </div>
             <div class="options">
               <ul class="list">
                 <?php echo $options ?>

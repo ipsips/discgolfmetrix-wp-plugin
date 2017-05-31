@@ -7,9 +7,9 @@ export default class SelectCompetition {
     this.overlay = this.getOverlay()
     this.options = el.querySelector('.options')
     this.competitions = this.options.querySelectorAll('.competition')
-    this.selected = el.querySelector('.selected')
+    this.selectedOption = el.querySelector('.selected option')
 
-    this.selected.addEventListener('click', (evt) => this.open())
+    el.querySelector('.selected').addEventListener('click', (evt) => this.open())
     document.addEventListener('mousedown', (evt) => this.onDocumentClick(evt))
     document.addEventListener('touchend', (evt) => this.onDocumentClick(evt))
 
@@ -41,7 +41,7 @@ export default class SelectCompetition {
   }
   onSelect = (evt) => {
     this.close()
-    this.selected.innerHTML = evt.target.innerHTML
+    this.selectedOption.textContent = evt.target.innerHTML
 
     for (let option of this.competitions)
       option === evt.target
