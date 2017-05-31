@@ -17,6 +17,7 @@ class SkoorinSettings {
       .map((idx, el) => $(el).data('name'))
       .toArray()
 
+    console.log(filtersSelected)
     this.$filtersSelectedInput.val(JSON.stringify(filtersSelected))
   }
 }

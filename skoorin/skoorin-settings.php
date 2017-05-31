@@ -3,17 +3,13 @@
 if (!defined('ABSPATH'))
   exit;
 
+require_once 'skoorin-l10n.php';
+
 class Skoorin_Settings {
-  function __construct() {
+  function __construct($l10n) {
     $this->ver = '2.0.0';
     $this->options = get_option('skoorin_options', self::get_default_options());
-    $this->l10n = array(
-      'title' => __('Skoorin', 'skoorin'),
-      'competition' => __('Competition', 'skoorin'),
-      'inactive_filters' => __('Inactive filters', 'skoorin'),
-      'active_filters' => __('Active filters', 'skoorin'),
-      'filters_instructions' => __('Choose which filter controls you wish to display by dragging them from ‘inactive’ to ‘active’', 'skoorin')
-    );
+    $this->l10n = $l10n;
 
     register_uninstall_hook(__FILE__, array('Skoorin_Settings', 'on_uninstall'));
     add_action('admin_menu', array($this, 'add_admin_menu_item'), 99);
@@ -44,8 +40,8 @@ class Skoorin_Settings {
 
   function add_admin_menu_item() {
     add_options_page(
-      $this->l10n['title'],               // page title in <head>
-      $this->l10n['title'],               // menu title
+      $this->l10n['settings']['title'], // page title in <head>
+      $this->l10n['settings']['title'], // menu title
       'manage_options',                   // capability
       'skoorin_options',                  // menu slug
       array($this, 'render_options_page') // render function
@@ -69,7 +65,7 @@ class Skoorin_Settings {
   function render_options_page() {
     ?>
       <div id="skoorin" class="wrap wrap acf-settings-wrap">
-        <h2><?php echo $this->l10n['title'] ?></h2>
+        <h2><?php echo $this->l10n['settings']['title'] ?></h2>
         <div id="skoorin-options">
           <form method="post" action="options.php" id="skoorin-options-form">
             <?php
@@ -88,13 +84,13 @@ class Skoorin_Settings {
     global $skoorin;
 
     $atts = $skoorin->defaults['shortcode_results'];
-    $results_filter = $this->options['results_filter'];
+    $results_filter = json_decode($this->options['results_filter']);
 
     $filters_available = array(
-      'competition' => array('id' => 0, 'name' => $this->l10n['competition']),
-      'player' => array(array('id' => 1, 'name' => $skoorin->l10n['results']['all']['player'])),
-      'class' => array(array('id' => 1, 'name' => $skoorin->l10n['results']['all']['class'])),
-      'group' => array(array('id' => 1, 'name' => $skoorin->l10n['results']['all']['group']))
+      'competitions' => array('ID' => 0, 'Name' => $this->l10n['settings']['competitions']),
+      'players' => array(array('Name' => $this->l10n['results']['all']['players'])),
+      'classes' => array(array('Name' => $this->l10n['results']['all']['classes'])),
+      'groups' => array(array('Name' => $this->l10n['results']['all']['groups']))
     );
     $filters_selected = array();
 
@@ -104,30 +100,26 @@ class Skoorin_Settings {
         unset($filters_available[$name]);
       }
 
-    /**
-     * @todo Drag & drop ui.
-     * @see http://jqueryui.com/sortable/#connect-lists
-     */
     echo '<div id="skoorin-filters">';
-    echo "<p>{$this->l10n['filters_instructions']}</p>";
-    echo "<h4>{$this->l10n['inactive_filters']}</h4>";
+    echo "<p>{$this->l10n['settings']['filters_instructions']}</p>";
+    echo "<h4>{$this->l10n['settings']['inactive_filters']}</h4>";
     echo '<div class="skoorin-results-filter filters-available">';
       foreach ($filters_available as $name => $options)
         echo call_user_func(
           "Skoorin::get_{$name}_filter",
-          $filters_available,
+          json_decode(json_encode($filters_available)),
           $atts,
-          $skoorin->l10n['results']
+          $this->l10n['results']
         );
     echo '</div>';
-    echo "<h4>{$this->l10n['active_filters']}</h4>";
+    echo "<h4>{$this->l10n['settings']['active_filters']}</h4>";
     echo '<div class="skoorin-results-filter filters-selected">';
       foreach ($filters_selected as $name => $options)
         echo call_user_func(
           "Skoorin::get_{$name}_filter",
-          $filters_selected,
+          json_decode(json_encode($filters_selected)),
           $atts,
-          $skoorin->l10n['results']
+          $this->l10n['results']
         );
     echo '</div>';
     echo '<input type="hidden" name="skoorin_options[results_filter]" value='.json_encode(array_keys($filters_selected)).'>';
@@ -140,14 +132,10 @@ class Skoorin_Settings {
     
     /* Save only the options that are defined in default options */
     foreach($option_names as $name)
-      if (isset($input[$name])) {
-        if ($name == 'results_filter')
-          $output[$name] = sanitize_option('results_filter', json_decode($input[$name]));
-        else
-          $output[$name] = $input[$name];
-      }
+      if (isset($input[$name]))
+        $output[$name] = $input[$name];
 
-    return $output;   
+    return $output;
   }
 
   function _print_html_element_atts($atts) {
@@ -160,14 +148,9 @@ class Skoorin_Settings {
 
   public static function get_default_options() {
     return array(
-      'results_filter' => array(
-        'competition',
-        'player',
-        'class',
-        'group'
-      ),
-      'responsive_table' => true
+      'results_filter' => '["competitions","players","classes","groups"]'
     );
   }
 }
-new Skoorin_Settings();
+
+new Skoorin_Settings($skoorin_l10n);

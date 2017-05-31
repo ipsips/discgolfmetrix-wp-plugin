@@ -27,7 +27,7 @@ export default function fetch(url, options) {
       })
     
     xhr.open(options.method, url)
-    xhr.withCredentials = true
+    // xhr.withCredentials = true
 
     Object.keys(options.headers).forEach(header =>
       xhr.setRequestHeader(header, options.headers[header])

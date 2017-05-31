@@ -11,27 +11,22 @@ export default store => next => action => {
     payload: action.payload
   })
 
-  return _callApi(action.payload, store)
-    .then(
-      response => next({
-        type: success,
-        payload: action.payload,
-        response
-      }),
-      error => next({
-        type: failure,
-        payload: action.payload,
-        error
-      })
-    )
+  return callApi(action.payload, store).then(
+    response => next({
+      type: success,
+      payload: action.payload,
+      response
+    }),
+    error => next({
+      type: failure,
+      payload: action.payload,
+      error
+    })
+  )
 }
 
-function _callApi(payload, store) {
-  /**
-   * @todo Temp
-   */
-  payload.data = `action=skoorin_get_results&${payload.query}`
-  const url = window.skoorinResults.ajax_url // `https://skoorin.com/api.php?${payload.query}`
+function callApi(payload, store) {
+  const url = `https://dgmtrx.com/api.php?${payload.query}`
   const opts = {
     credentials: 'same-origin',
     method: payload.verb || (payload.data ? 'POST' : 'GET'),
@@ -47,19 +42,19 @@ function _callApi(payload, store) {
     opts.body = payload.data
   }
 
-  return fetch(url, opts).then(_parseResponse)
+  return fetch(url, opts).then(parseResponse)
 }
 
-function _parseResponse(response) {
+function parseResponse(response) {
   return response.ok
     ? response.json()
     : response.json().then(
-      (e) => _throwResponseError(response, e),
-      () => _throwResponseError(response)
+      (e) => throwResponseError(response, e),
+      () => throwResponseError(response)
     )
 }
 
-function _throwResponseError(response, errJson) {
+function throwResponseError(response, errJson) {
   throw Object.assign({
     status: response.status,
     statusText: response.statusText,

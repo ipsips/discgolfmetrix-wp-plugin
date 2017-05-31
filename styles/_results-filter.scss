@@ -2,7 +2,7 @@
 
 @import 'variables-and-mixins';
 
-.skoorin-select-competition {
+.skoorin-select-competitions {
   &:after {
     content: ' ';
     visibility: hidden;
@@ -120,6 +120,7 @@
         &:after {
           top: $indent;
           border-width: 0 0 0 1px;
+          height: 100%;
         }
 
         &:last-child:after {
@@ -168,7 +169,7 @@
 }
 
 @media (max-width: 900px) {
-  .skoorin-select-competition {
+  .skoorin-select-competitions {
     .select {
       width: 100%;
     }
@@ -179,7 +180,7 @@
 }
 
 @media (max-width: 640px) {
-  .skoorin-select-competition {
+  .skoorin-select-competitions {
     .options {
       min-width: 200px;
       max-width: 90vw;
@@ -190,7 +191,7 @@
 }
 
 /* overlay behind the menu in nvp (<= 640px) */
-.skoorin-select-competition-overlay {
+.skoorin-select-competitions-overlay {
   position: fixed;
   z-index: 1;
   left: 0;
@@ -214,14 +215,14 @@
       margin-right: 10px;
     }
 
-    &.skoorin-results-filter-control-select-competition {
+    &.skoorin-results-filter-control-select-competitions {
       display: inline-flex;
       justify-content: flex-start;
       flex-grow: 1;
       flex-shrink: 5;
       min-width: 0;
 
-      .skoorin-select-competition {
+      .skoorin-select-competitions {
         width: 100%;
       }
     }
@@ -232,10 +233,6 @@
   }
 
   select {
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    text-rendering: inherit;
     overflow: hidden;
     border: 1px solid $border-color;
     border-radius: $border-radius;
@@ -247,5 +244,38 @@
 
   select::-ms-expand {
     display: none;
+  }
+}
+
+.skoorin-results-filter-control-select-players {
+  position: relative;
+  width: 20%;
+
+  select {
+    width: 100%;
+
+    &.placeholder {
+      pointer-events: none;
+      visibility: hidden;
+
+      &.visible {
+        visibility: visible;
+      }
+    }
+   
+    &[multiple] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 40vh;
+      min-height: 200px;
+      overflow: auto;
+      background-image: none;
+      display: none;
+
+      &.visible {
+        display: block;
+      }
+    }
   }
 }
