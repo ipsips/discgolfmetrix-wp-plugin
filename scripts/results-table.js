@@ -312,7 +312,7 @@ export default class ResultsTable {
 
     // if any of the filters is not set to "all"
     for (let filterName in this.state.filters)
-      if (isFilterActive(filterName))
+      if (isFilterActive(filterName)) {
         playersByClasses.order.forEach(className => {
           const players = playersByClasses.byName[className]
           
@@ -326,6 +326,8 @@ export default class ResultsTable {
           })
           playersByClasses.byName[className] = players
         })
+        break // only one filter may be active at a time
+      }
 
     return playersByClasses
   }

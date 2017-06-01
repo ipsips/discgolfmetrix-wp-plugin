@@ -89,16 +89,25 @@ class Skoorin {
       if ($is_api_query_error($filters) || $is_api_query_error($results))
         return "$output<p class='error'>{$this->l10n['network_error']}</p></div>";
 
+      $filters_state = $this->get_filters_state($atts, $results_filter, $filters);
+
       /* filter */
       if (is_array($results_filter) && count($results_filter)) {
+        $active_filter_found = false;
         $output .= '<div class="skoorin-results-filter">';
-        foreach ($results_filter as $filter_name)
+        foreach ($results_filter as $filter_name) {
           $output .= call_user_func(
             get_class()."::get_{$filter_name}_filter",
             $filters,
             $atts,
-            $this->l10n
+            $this->l10n,
+            $filter_name == 'competitions' || $active_filter_found
+              ? null
+              : $filters_state[$filter_name]
           );
+          if (array_key_exists($filter_name, $filters_state) && $filters_state[$filter_name] != 'all')
+            $active_filter_found = true;
+        }
         $output .= '</div>';
       }
 
@@ -106,7 +115,13 @@ class Skoorin {
       if (property_exists($results, 'Competition')) {
         $competition = $results->Competition;
         $output .= "<div class='skoorin-results-table'><div class='skoorin-results-table-container'>";
-        $output .= (new Skoorin_Results_Table($competition, $this->l10n, $this->profile_link_icon_path))->get();
+        $results_table = new Skoorin_Results_Table(
+          $competition,
+          $filters_state,
+          $this->l10n,
+          $this->profile_link_icon_path
+        );
+        $output .= $results_table->get();
         $output .= '</div></div>';
       }
 
@@ -122,6 +137,63 @@ class Skoorin {
     $output .= '</div>';
 
     return $output;
+  }
+
+  function get_filters_state($atts, $filters_selected, $filters_data) {
+    $singular_filter_names = array(
+      'classes' => 'class',
+      'groups' => 'group'
+    );
+    $filters_state = array();
+    $in_available_options = function ($selected_option, $filter_name) use ($filters_data) {
+      return !is_array($filters_data->{$filter_name}) || !count($filters_data->{$filter_name})
+        ? false
+        : $filter_name == 'groups'
+          ? array_filter($filters_data->{$filter_name}, function ($available_group) use ($selected_option) {
+              return $available_group->Number == $selected_option;
+            })
+          : in_array(
+              (object) array('Name' => $selected_option),
+              $filters_data->{$filter_name}
+            );
+    };
+
+    foreach ($filters_selected as $filter_name)
+      if ($filter_name != 'competitions') {
+        switch ($filter_name) {
+          case 'competitions':
+            break;
+          case 'players':
+            $selected = array();
+            if (array_key_exists($filter_name, $atts)) {
+              $selected = array_map('trim', explode(',', $atts['players']));
+
+              if (count($selected))
+                $selected = in_array('all', $selected)
+                  ? []
+                  : array_filter($selected, function ($selected_option) use ($in_available_options) {
+                      return $in_available_options($selected_option, 'players');
+                    });
+            }
+            $filters_state['players'] = count($selected)
+              ? $selected
+              : 'all';
+            break;
+          default:
+            $singular_filter_name = array_key_exists($filter_name, $singular_filter_names)
+              ? $singular_filter_names[$filter_name]
+              : preg_replace('/s$/', '', $filter_name);
+
+            $filters_state[$filter_name] = !array_key_exists($singular_filter_name, $atts) ||
+              empty($atts[$singular_filter_name]) ||
+              !$in_available_options($atts[$singular_filter_name], $filter_name)
+                ? 'all'
+                : $atts[$singular_filter_name];
+            break;
+        }
+      }
+
+    return $filters_state;
   }
 
   public static function get_competitions_filter($filters, $atts, $l10n) {
@@ -177,12 +249,11 @@ class Skoorin {
     return ob_get_clean();
   }
 
-  public static function get_players_filter($filters, $atts, $l10n) {
+  public static function get_players_filter($filters, $atts, $l10n, $selected = null) {
     if (!property_exists($filters, 'players') || !count($filters->players))
       return '';
 
-    $selected_players = array_map('trim', explode(',', $atts['players']));
-    $is_any_selected = count($selected_players) && !in_array('all', $selected_players);
+    $is_any_selected = is_array($selected) && count($selected);
 
     ob_start();
     ?>
@@ -191,8 +262,8 @@ class Skoorin {
           <option>
             <?php echo !$is_any_selected
               ? $l10n['all']['players']
-              : count($selected_players) == 1
-                ? $selected_players[0]
+              : count($selected) == 1
+                ? $selected[0]
                 : $l10n['multiple']['players']
             ?>
           </option>
@@ -201,7 +272,7 @@ class Skoorin {
           <option value="all" <?php if (!$is_any_selected) echo 'selected'; ?>><?php echo $l10n['all']['players'] ?></option>
           <?php
             foreach ($filters->players as $player)
-              echo "<option value='$player->Name' ".($is_any_selected && in_array($player->Name, $selected_players) ? 'selected' : '').">$player->Name</option>";
+              echo "<option value='$player->Name' ".($is_any_selected && in_array($player->Name, $selected) ? 'selected' : '').">$player->Name</option>";
           ?>
         </select>
       </div>
@@ -209,7 +280,7 @@ class Skoorin {
     return ob_get_clean();
   }
 
-  public static function get_classes_filter($filters, $atts, $l10n) {
+  public static function get_classes_filter($filters, $atts, $l10n, $selected = null) {
     if (!property_exists($filters, 'classes') || !count($filters->classes))
       return '';
 
@@ -217,10 +288,10 @@ class Skoorin {
     ?>
       <div class="skoorin-results-filter-control-select-classes" data-name="classes">
         <select name="classes">
-          <option value="all" <?php if ($atts['class'] == 'all') echo 'selected'; ?>><?php echo $l10n['all']['classes'] ?></option>
+          <option value="all" <?php if (!$selected) echo 'selected'; ?>><?php echo $l10n['all']['classes'] ?></option>
           <?php
             foreach ($filters->classes as $class)
-              echo "<option value='$class->Name' ".($atts['class'] == $class->Name ? 'selected' : '').">$class->Name</option>";
+              echo "<option value='$class->Name' ".($selected == $class->Name ? 'selected' : '').">$class->Name</option>";
           ?>
         </select>
       </div>
@@ -228,7 +299,7 @@ class Skoorin {
     return ob_get_clean();
   }
 
-  public static function get_groups_filter($filters, $atts, $l10n) {
+  public static function get_groups_filter($filters, $atts, $l10n, $selected = null) {
     if (!property_exists($filters, 'groups') || !count($filters->groups))
       return '';
 
@@ -236,7 +307,7 @@ class Skoorin {
     ?>
       <div class="skoorin-results-filter-control-select-groups" data-name="groups">
         <select name="groups">
-          <option value="all" <?php if ($atts['group'] == 'all') echo 'selected'; ?>><?php echo $l10n['all']['groups'] ?></option>
+          <option value="all" <?php if (!$selected) echo 'selected'; ?>><?php echo $l10n['all']['groups'] ?></option>
           <?php
             foreach ($filters->groups as $group) {
               $label = $group->Number.(
@@ -244,7 +315,7 @@ class Skoorin {
                   ? " ($group->Time)"
                   : ''
               );
-              echo "<option value='$group->Number' ".($atts['group'] == $group->Number ? 'selected' : '').">$label</option>";
+              echo "<option value='$group->Number' ".($selected == $group->Number ? 'selected' : '').">$label</option>";
             }
           ?>
         </select>

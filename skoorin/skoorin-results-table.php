@@ -3,8 +3,9 @@ if (!defined('ABSPATH'))
   exit;
 
 class Skoorin_Results_Table {
-  function __construct($competition, $l10n, $profile_link_icon_path) {
+  function __construct($competition, $filters_state, $l10n, $profile_link_icon_path) {
     $this->competition = $competition;
+    $this->filters_state = $filters_state;
     $this->l10n = $l10n;
     $this->sub_competition_date_fmt = 'm/d/y H:i';
     $this->no_class_flag = '$___NO_CLASS';
@@ -21,6 +22,7 @@ class Skoorin_Results_Table {
       && count($this->competition->SubCompetitions);
     $show_previous_rounds_sum = (int) $this->competition->ShowPreviousRoundsSum;
     $aggregated_results = $this->aggregate_results();
+    $players_by_classes = $this->filter_players($this->get_players_by_classes($aggregated_results));
     $num_competitions = is_array($this->competition->SubCompetitions) ? count($this->competition->SubCompetitions) : 0;
     if (is_array($this->competition->Results) && count($this->competition->Results))
       $num_competitions++;
@@ -66,8 +68,8 @@ class Skoorin_Results_Table {
         </thead>
         <?php
           $colspan = count($this->competition->Tracks) + ($has_subcompetitions ? 7 : $show_previous_rounds_sum ? 6 : 4);
-          foreach ($this->get_players_by_classes($aggregated_results) as $class_name => $players) {
-            if ($class_name != $this->no_class_flag) { ?>
+          foreach ($players_by_classes as $class_name => $players) {
+            if ($class_name != $this->no_class_flag && count($players)) { ?>
               <thead>
                 <th class="class" colSpan="<?php echo $colspan ?>"><?php echo $class_name ?></th>
               </thead>
@@ -172,6 +174,33 @@ class Skoorin_Results_Table {
     }
 
     return $players_by_classes;
+  }
+
+  function filter_players($players_by_classes) {
+    $filter_map = array(
+      'players' => 'Name',
+      'classes' => 'ClassName',
+      'groups' => 'Group'
+    );
+    $filtered = $players_by_classes;
+
+    foreach ($this->filters_state as $filter_name => $filter_value)
+      if ($filter_value != 'all') {
+        foreach ($filtered as $class_name => $players) {
+          if ($filter_name == 'classes') {
+            if ($filter_value != $class_name)
+              $filtered[$class_name] = array();
+          } else
+            $filtered[$class_name] = array_filter($players, function ($player) use ($filter_name, $filter_value, $filter_map) {
+              return $filter_name != 'players'
+                ? $player->{$filter_map[$filter_name]} == $filter_value
+                : is_array($filter_value) && in_array($player->Name, $filter_value);
+            });
+        }
+        break; // only one filter may be active at a time
+      }
+
+    return $filtered;
   }
 
   function order_players_by_total_score($players, $num_competitions) {
