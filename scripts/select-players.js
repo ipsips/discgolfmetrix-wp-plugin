@@ -10,6 +10,7 @@ export default class SelectPlayers {
     this.store = store
     document.addEventListener('mousedown', (evt) => this.onDocumentClick(evt))
     document.addEventListener('touchend', (evt) => this.onDocumentClick(evt))
+    document.addEventListener('touchstart', (evt) => this.setState({ touch: true }))
     this.setState(state)
   }
   setState(state) {
@@ -18,7 +19,7 @@ export default class SelectPlayers {
   }
   render() {
     const { selected, lastChanged } = this.state.filters.players
-    const isAnySelected = Array.isArray(selected) && selected.length
+    const isAllSelected = this.isAllSelected()
     const options = this.state.data.filters.players.slice(0)
 
     // sort alphabetically
@@ -34,13 +35,16 @@ export default class SelectPlayers {
     const container = (
       <div
         key="container"
-        className="skoorin-results-filter-control-select-players"
+        class={{
+          'skoorin-results-filter-control-select-players': 1,
+          touch: this.state.touch
+        }}
         on-click={open}
         on-touchstart={open}
         >
         <select class={{ placeholder:1, visible: !this.state.showMultiselect }}>
           <option>
-            {!isAnySelected
+            {isAllSelected
               ? window.skoorinResults.l10n.all.players
               : selected.length === 1
                 ? selected[0]
@@ -54,16 +58,17 @@ export default class SelectPlayers {
           multiple
           autoComplete="off"
           on-change={this.onChange}
+          on-blur={this.onBlur}
           class={{ visible: this.state.showMultiselect }}
           >
-          <option key="all" value="all" selected={!isAnySelected}>
+          <option key="all" value="all" selected={isAllSelected}>
             {window.skoorinResults.l10n.all.players}
           </option>
           {options.map(({ Name }) =>
             <option
               key={`${Name}-${lastChanged || Date.now()}`}
               value={Name}
-              selected={isAnySelected && selected.indexOf(Name) > -1}
+              selected={selected.indexOf(Name) > -1}
               >
               {Name}
             </option>
@@ -102,15 +107,22 @@ export default class SelectPlayers {
       this.setState({ showMultiselect: false })
   }
   onChange = (evt) => {
-    this.store.dispatch({
-      type: 'FILTER',
-      payload: {
-        players: {
-          selected: getMultiSelectValue(evt.target),
-          lastChanged: Date.now() // to force-patch vNode
-        }
-      }
-    })
+    this.dispatchAction(
+      getMultiSelectValue(evt.target)
+    )
+  }
+  onBlur = () => {
+    if (this.isAllSelected())
+      this.dispatchAction(['all'])
+    
+    this.close()
+  }
+  isAllSelected = () => {
+    const { selected } = this.state.filters.players
+
+    return !Array.isArray(selected)
+      || !selected.length
+      || selected.indexOf('all') > -1
   }
   onDocumentClick = (evt) => {
     let node = evt.target
@@ -123,5 +135,16 @@ export default class SelectPlayers {
     }
 
     this.close()
+  }
+  dispatchAction(selected) {
+    this.store.dispatch({
+      type: 'FILTER',
+      payload: {
+        players: {
+          selected,
+          lastChanged: Date.now() // to force-patch vNode
+        }
+      }
+    })
   }
 }

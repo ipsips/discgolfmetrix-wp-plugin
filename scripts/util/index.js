@@ -49,15 +49,11 @@ export function deepCopy(obj, copy = {}) {
 }
 
 /**
- * Returns either an array of selected option values or a string 'all'
+ * Returns an array of selected option values.
  */
 export function getMultiSelectValue(el) {
-  const selected = (el.selectedOptions
+  return (el.selectedOptions
     ? [...el.selectedOptions]
     : [...el.options].filter(o => o.selected)
   ).map(o => o.value)
-
-  return selected.indexOf('all') < 0
-    ? selected
-    : 'all'
 }

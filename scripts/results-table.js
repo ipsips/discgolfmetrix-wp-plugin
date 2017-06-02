@@ -306,9 +306,10 @@ export default class ResultsTable {
       groups: 'Group'
     }
     
-    const isFilterActive = (filterName) => filterName == 'players'
-      ? this.state.filters.players.selected != 'all'
-      : this.state.filters[filterName] != 'all'
+    const isFilterActive = (filterName) => filterName != 'players'
+      ? this.state.filters[filterName] != 'all'
+      : Array.isArray(this.state.filters.players.selected) &&
+        this.state.filters.players.selected.indexOf('all') < 0
 
     // if any of the filters is not set to "all"
     for (let filterName in this.state.filters)
