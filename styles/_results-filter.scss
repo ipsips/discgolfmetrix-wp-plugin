@@ -176,7 +176,7 @@
 @media (max-width: 640px) {
   .skoorin-select-competitions {
     .options {
-      min-width: 200px;
+      min-width: 180px;
       max-width: 90vw;
       max-height: 90vh;
       overflow: auto;
@@ -199,29 +199,29 @@
 .skoorin-results-filter {
   display: flex;
   justify-content: flex-start;
-  flex-wrap: wrap;  
+  flex-wrap: wrap;
+  margin: -5px;
 
   >div {
     flex-grow: 0;
     flex-shrink: 0;
-    margint-top: 5px;
-    margin-bottom: 5px;
+    margin: 5px;
     max-width: 100%;
-
-    &:not(:last-child) {
-      margin-right: 10px;
-    }
 
     &.skoorin-results-filter-control-select-competitions {
       display: inline-flex;
       justify-content: flex-start;
       flex-grow: 1;
       flex-shrink: 5;
-      min-width: 150px;
+      min-width: 180px;
 
       .skoorin-select-competitions {
         width: 100%;
       }
+    }
+
+    &.no-options {
+      display: none;
     }
   }
 
@@ -247,8 +247,10 @@
 
 .skoorin-results-filter-control-select-players {
   position: relative;
+  min-width: 180px;
 
   select {
+    min-width: 100%;
     &.placeholder {
       pointer-events: none;
       visibility: hidden;
@@ -262,11 +264,11 @@
       position: absolute;
       left: 0;
       top: 0;
-      width: 100%;
       height: 40vh;
       min-height: 200px;
       overflow: auto;
       background-image: none;
+      padding-right: 10px;
       display: none;
 
       &.visible {

@@ -258,29 +258,28 @@ class Skoorin {
   }
 
   public static function get_players_filter($filters, $atts, $l10n, $selected = null) {
-    if (!property_exists($filters, 'players') || !count($filters->players))
-      return '';
-
+    $got_data = property_exists($filters, 'players') && count($filters->players);
     $is_any_selected = is_array($selected) && count($selected);
 
     ob_start();
     ?>
-      <div class="skoorin-results-filter-control-select-players" data-name="players">
+      <div class="skoorin-results-filter-control-select-players <?php echo $got_data ? '' : 'no-options' ?>" data-name="players">
         <select class="placeholder visible">
           <option>
             <?php echo !$is_any_selected
               ? $l10n['all']['players']
-              : count($selected) == 1
+              : (count($selected) == 1
                 ? $selected[0]
-                : $l10n['multiple']['players']
+                : $l10n['multiple']['players'])
             ?>
           </option>
         </select>
         <select name="players" multiple autoComplete="off">
           <option value="all" <?php if (!$is_any_selected) echo 'selected'; ?>><?php echo $l10n['all']['players'] ?></option>
           <?php
-            foreach ($filters->players as $player)
-              echo "<option value='$player->Name' ".($is_any_selected && in_array($player->Name, $selected) ? 'selected' : '').">$player->Name</option>";
+            if ($got_data)
+              foreach ($filters->players as $player)
+                echo "<option value='$player->Name' ".($is_any_selected && in_array($player->Name, $selected) ? 'selected' : '').">$player->Name</option>";
           ?>
         </select>
       </div>
@@ -289,17 +288,17 @@ class Skoorin {
   }
 
   public static function get_classes_filter($filters, $atts, $l10n, $selected = null) {
-    if (!property_exists($filters, 'classes') || !count($filters->classes))
-      return '';
+    $got_data = property_exists($filters, 'classes') && count($filters->classes);
 
     ob_start();
     ?>
-      <div class="skoorin-results-filter-control-select-classes" data-name="classes">
+      <div class="skoorin-results-filter-control-select-classes <?php echo $got_data ? '' : 'no-options' ?>" data-name="classes">
         <select name="classes">
           <option value="all" <?php if (!$selected) echo 'selected'; ?>><?php echo $l10n['all']['classes'] ?></option>
           <?php
-            foreach ($filters->classes as $class)
-              echo "<option value='$class->Name' ".($selected == $class->Name ? 'selected' : '').">$class->Name</option>";
+            if ($got_data)
+              foreach ($filters->classes as $class)
+                echo "<option value='$class->Name' ".($selected == $class->Name ? 'selected' : '').">$class->Name</option>";
           ?>
         </select>
       </div>
@@ -308,23 +307,23 @@ class Skoorin {
   }
 
   public static function get_groups_filter($filters, $atts, $l10n, $selected = null) {
-    if (!property_exists($filters, 'groups') || !count($filters->groups))
-      return '';
+    $got_data = property_exists($filters, 'groups') && count($filters->groups);
 
     ob_start();
     ?>
-      <div class="skoorin-results-filter-control-select-groups" data-name="groups">
+      <div class="skoorin-results-filter-control-select-groups <?php echo $got_data ? '' : 'no-options' ?>" data-name="groups">
         <select name="groups">
           <option value="all" <?php if (!$selected) echo 'selected'; ?>><?php echo $l10n['all']['groups'] ?></option>
           <?php
-            foreach ($filters->groups as $group) {
-              $label = $group->Number.(
-                property_exists($group, 'Time') && !empty($group->Time)
-                  ? " ($group->Time)"
-                  : ''
-              );
-              echo "<option value='$group->Number' ".($selected == $group->Number ? 'selected' : '').">$label</option>";
-            }
+            if ($got_data)
+              foreach ($filters->groups as $group) {
+                $label = $group->Number.(
+                  property_exists($group, 'Time') && !empty($group->Time)
+                    ? " ($group->Time)"
+                    : ''
+                );
+                echo "<option value='$group->Number' ".($selected == $group->Number ? 'selected' : '').">$label</option>";
+              }
           ?>
         </select>
       </div>

@@ -20,7 +20,7 @@ export default class SelectPlayers {
   render() {
     const { selected, lastChanged } = this.state.filters.players
     const isAllSelected = this.isAllSelected()
-    const options = this.state.data.filters.players.slice(0)
+    const options = (getDeepProp(this.state, 'data.filters.players') || []).slice(0)
 
     // sort alphabetically
     options.sort((a, b) =>
@@ -37,6 +37,7 @@ export default class SelectPlayers {
         key="container"
         class={{
           'skoorin-results-filter-control-select-players': 1,
+          'no-options': !options.length,
           touch: this.state.touch
         }}
         on-click={open}

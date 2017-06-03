@@ -70,6 +70,8 @@ export default class SelectCompetition {
       } else
         this.competitions[i].classList.remove('active')
 
+    this.setButtonStates()
+    
     if (typeof this.onChange === 'function')
       this.onChange(el.dataset.id)
   }
@@ -108,13 +110,11 @@ export default class SelectCompetition {
     this.selectCompetition(
       this.competitions[this.activeCompetitionIdx - 1]
     )
-    this.setButtonStates()
   }
   onClickNext = () => {
     this.selectCompetition(
       this.competitions[this.activeCompetitionIdx + 1]
     )
-    this.setButtonStates()
   }
   setButtonStates() {
     this.activeCompetitionIdx == 0

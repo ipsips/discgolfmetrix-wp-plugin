@@ -36,9 +36,7 @@ const reducers = {
             results: action.response
           }
       case 'FETCH_FILTER_RES':
-        const gotFilterData =
-          !!getDeepProp(action, 'response.players') &&
-          !!getDeepProp(action, 'response.competitions')
+        const gotFilterData = !!getDeepProp(action, 'response.competitions')
 
         if (!gotFilterData)
           alert(window.skoorinResults.l10n.missing_data_error)
@@ -111,28 +109,17 @@ class Results {
     filtersSelected.forEach(name => {
       if (name != 'competitions') {
         const container = this.el.querySelector(`.skoorin-results-filter-control-select-${name}`)
+        const select = container.querySelector(`select[name="${name}"]`)
 
-        if (container) {
-          const select = container.querySelector(`select[name="${name}"]`)
-          this.filters[name] = { container, select }
-          
-          if (name == 'players')
-            state[name] = {
-              selected: getMultiSelectValue(select),
-              lastChanged: Date.now()
-            }
-          else {
-            state[name] = select.value
-            select.addEventListener('change', (evt) => {
-              this.store.dispatch({
-                type: 'FILTER',
-                payload: {
-                  [name]: evt.target.value
-                }
-              })
-            })
+        this.filters[name] = { container, select }
+        
+        if (name == 'players')
+          state[name] = {
+            selected: getMultiSelectValue(select),
+            lastChanged: Date.now()
           }
-        }
+        else
+          state[name] = select.value
       }
     })
 
@@ -168,27 +155,32 @@ class Results {
         this.renderFilter(name)
   }
   renderFilter(name) {
-    const allProps = this.state.filters[name] == 'all'
-      ? { selected: true }
-      : {}
-    const options = this.state.data.filters[name]
-    const select = <select name={name}>
-      <option value="all" { ...allProps }>{window.skoorinResults.l10n.all[name]}</option>
-      {!Array.isArray(options) ? '' : options.map(option => {
-        const value = name == 'groups' ? option.Number : option.Name
-        const props = {
-          value,
-          selected: this.state.filters[name] == value
-        }
-        return <option {...props}>{value}</option>
-      })}
-    </select>
+    const selected = this.state.filters[name]
+    const options = getDeepProp(this.state, ['data', 'filters', name])
+    const container = <div class={{
+      [`skoorin-results-filter-control-select-${name}`]: 1,
+      'no-options': !Array.isArray(options) || !options.length
+      }}>
+      <select name={name} on-change={this.onChangeFilter.bind(this, name)}>
+        <option value="all" selected={selected == 'all'}>
+          {window.skoorinResults.l10n.all[name]}
+        </option>
+        {!Array.isArray(options) ? '' : options.map(option => {
+          const value = name == 'groups'
+            ? option.Number
+            : option.Name
+          return <option value={value} selected={selected == value}>
+            {value}
+          </option>
+        })}
+      </select>
+    </div>
 
     /* clear SSR select before patching in a vnode */
-    if (this.filters[name].select instanceof Element)
-      this.filters[name].select.innerHTML = ''
+    if (this.filters[name].container instanceof Element)
+      this.filters[name].container.innerHTML = ''
 
-    this.filters[name].select = patch(this.filters[name].select, select)
+    this.filters[name].container = patch(this.filters[name].container, container)
   }
   onCompetitionSelect = (competitionId) => {
     // clear filters
@@ -210,6 +202,14 @@ class Results {
       payload: {
         types: ['FETCH_FILTER_REQ', 'FETCH_FILTER_RES', 'FETCH_FILTER_ERR'],
         query: `content=wordpress_filters&competition_id=${competitionId}`
+      }
+    })
+  }
+  onChangeFilter(name, evt) {
+    this.store.dispatch({
+      type: 'FILTER',
+      payload: {
+        [name]: evt.target.value
       }
     })
   }
