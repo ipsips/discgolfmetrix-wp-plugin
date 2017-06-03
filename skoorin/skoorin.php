@@ -146,16 +146,24 @@ class Skoorin {
     );
     $filters_state = array();
     $in_available_options = function ($selected_option, $filter_name) use ($filters_data) {
-      return !is_array($filters_data->{$filter_name}) || !count($filters_data->{$filter_name})
-        ? false
-        : $filter_name == 'groups'
-          ? array_filter($filters_data->{$filter_name}, function ($available_group) use ($selected_option) {
-              return $available_group->Number == $selected_option;
-            })
-          : in_array(
-              (object) array('Name' => $selected_option),
-              $filters_data->{$filter_name}
-            );
+      if (
+        !property_exists($filters_data, $filter_name) ||
+        !is_array($filters_data->{$filter_name}) ||
+        !count($filters_data->{$filter_name})
+      )
+        return false;
+
+      switch ($filter_name) {
+        case 'groups':
+          return array_filter($filters_data->{$filter_name}, function ($available_group) use ($selected_option) {
+            return $available_group->Number == $selected_option;
+          });
+        default:
+          return in_array(
+            (object) array('Name' => $selected_option),
+            $filters_data->{$filter_name}
+          );
+      }
     };
 
     foreach ($filters_selected as $filter_name)

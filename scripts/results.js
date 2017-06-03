@@ -111,25 +111,27 @@ class Results {
     filtersSelected.forEach(name => {
       if (name != 'competitions') {
         const container = this.el.querySelector(`.skoorin-results-filter-control-select-${name}`)
-        const select = container.querySelector(`select[name="${name}"]`)
 
-        this.filters[name] = { container, select }
-        
-        if (name == 'players')
-          state[name] = {
-            selected: getMultiSelectValue(select),
-            lastChanged: Date.now()
-          }
-        else {
-          state[name] = select.value
-          select.addEventListener('change', (evt) => {
-            this.store.dispatch({
-              type: 'FILTER',
-              payload: {
-                [name]: evt.target.value
-              }
+        if (container) {
+          const select = container.querySelector(`select[name="${name}"]`)
+          this.filters[name] = { container, select }
+          
+          if (name == 'players')
+            state[name] = {
+              selected: getMultiSelectValue(select),
+              lastChanged: Date.now()
+            }
+          else {
+            state[name] = select.value
+            select.addEventListener('change', (evt) => {
+              this.store.dispatch({
+                type: 'FILTER',
+                payload: {
+                  [name]: evt.target.value
+                }
+              })
             })
-          })
+          }
         }
       }
     })
