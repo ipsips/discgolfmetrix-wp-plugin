@@ -13,8 +13,25 @@ export default class SelectCompetition {
     document.addEventListener('mousedown', (evt) => this.onDocumentClick(evt))
     document.addEventListener('touchend', (evt) => this.onDocumentClick(evt))
 
-    for (let option of this.competitions)
-      option.addEventListener('click', this.onSelect)
+    this.activeCompetitionIdx = 0
+    for (let i = 0; i < this.competitions.length; i++) {
+      this.competitions[i].addEventListener('click', this.onSelect)
+      if (this.competitions[i].classList.contains('active'))
+        this.activeCompetitionIdx = i
+    }
+
+    const buttons = el.querySelectorAll('.button')
+    this.prevBtn = buttons[0]
+    this.nextBtn = buttons[1]
+    this.setButtonStates()
+    this.prevBtn.addEventListener('click', () => {
+      clearTimeout(this.btnThrottle)
+      this.btnThrottle = setTimeout(this.onClickPrev, 400)
+    })
+    this.nextBtn.addEventListener('click', () => {
+      clearTimeout(this.btnThrottle)
+      this.btnThrottle = setTimeout(this.onClickNext, 400)
+    })
   }
   getOverlay() {
     let overlay = document.querySelector('.skoorin-select-competitions-overlay')
@@ -41,15 +58,20 @@ export default class SelectCompetition {
   }
   onSelect = (evt) => {
     this.close()
-    this.selectedOption.textContent = evt.target.innerHTML
+    this.selectCompetition(evt.target)
+  }
+  selectCompetition = (el) => {
+    this.selectedOption.textContent = el.innerHTML
 
-    for (let option of this.competitions)
-      option === evt.target
-        ? option.classList.add('active')
-        : option.classList.remove('active')
+    for (let i = 0; i < this.competitions.length; i++)
+      if (this.competitions[i] === el) {
+        this.activeCompetitionIdx = i
+        this.competitions[i].classList.add('active')
+      } else
+        this.competitions[i].classList.remove('active')
 
     if (typeof this.onChange === 'function')
-      this.onChange(evt.target.dataset.id)
+      this.onChange(el.dataset.id)
   }
   open = () => {
     if (this.isVisible(this.options))
@@ -82,4 +104,24 @@ export default class SelectCompetition {
   }
   isVisible = (el) =>
     !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length)
+  onClickPrev = () => {
+    this.selectCompetition(
+      this.competitions[this.activeCompetitionIdx - 1]
+    )
+    this.setButtonStates()
+  }
+  onClickNext = () => {
+    this.selectCompetition(
+      this.competitions[this.activeCompetitionIdx + 1]
+    )
+    this.setButtonStates()
+  }
+  setButtonStates() {
+    this.activeCompetitionIdx == 0
+      ? this.prevBtn.classList.add('disabled')
+      : this.prevBtn.classList.remove('disabled')
+    this.activeCompetitionIdx == this.competitions.length-1
+      ? this.nextBtn.classList.add('disabled')
+      : this.nextBtn.classList.remove('disabled')
+  }
 }
