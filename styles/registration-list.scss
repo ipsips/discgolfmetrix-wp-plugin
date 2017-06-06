@@ -15,27 +15,32 @@
     tbody,
     tfoot {
       th, td {
-        padding-left: 3px;
-        padding-right: 3px;
+        padding: 3px;
         border: 1px solid $border-color;
         vertical-align: middle;
+      }
+      tr:nth-child(n) td {
+        background-color: darken(white, 3%);
       }
     }
 
     thead {
-      th, td {
-        font-weight: bold;
-        background-color: white;
+      tr {
+        th, td {
+          font-weight: bold;
+          background-color: white;
 
-        &:not(:last-child) {
-          border-right-color: transparent;
+          &:not(:last-child) {
+            border-right-color: transparent;
+          }
         }
       }
     }
 
     tbody {
-      tr:hover {
-        background-color: white;
+      &:hover {
+        outline: 1px solid lighten(black, 30%);
+        outline-offset: 3px
       }
 
       td:first-child {
