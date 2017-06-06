@@ -49,8 +49,8 @@ export default class ResultsTable {
               <col width="100%"/>
             </colgroup>
             <thead>
-              <tr>
-                <th className="hole" colSpan={colSpan}>{window.skoorinResults.l10n.hole}</th>
+              <tr className="hole">
+                <th className="hole" colSpan={colSpan}></th>
                 {this.state.data.results.Competition.Tracks.map(({ Number }, idx) =>
                   <th>{Number}</th>
                 )}
@@ -72,7 +72,9 @@ export default class ResultsTable {
             {playersByClasses.order.map((className) =>
               [className == noClassFlag || !playersByClasses.byName[className].order.length ? '' :
                 <thead key={Competition.ID+'/'+className}>
-                  <th className="class" colSpan={Competition.Tracks.length + (hasSubcompetitions ? 7 : showPreviousRoundsSum ? 6 : 4)}>{className}</th>
+                  <tr className="class">
+                    <th className="class" colSpan={Competition.Tracks.length + (hasSubcompetitions ? 7 : showPreviousRoundsSum ? 6 : 4)}>{`${className} (${this.playersByClasses.byName[className].order.length})`}</th>
+                  </tr>
                 </thead>,
                 playersByClasses.byName[className].order.map((playerName, idx) => {
                   const player = playersByClasses.byName[className].byName[playerName]

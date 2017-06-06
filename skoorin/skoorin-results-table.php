@@ -25,7 +25,8 @@ class Skoorin_Results_Table {
       && (int) $this->competition->MetrixMode == 2;
     $show_previous_rounds_sum = (int) $this->competition->ShowPreviousRoundsSum;
     $aggregated_results = $this->aggregate_results();
-    $players_by_classes = $this->filter_players($this->get_players_by_classes($aggregated_results));
+    $players_by_classes = $this->get_players_by_classes($aggregated_results);
+    $players_by_classes_filtered = $this->filter_players($players_by_classes);
     $num_competitions = is_array($this->competition->SubCompetitions) ? count($this->competition->SubCompetitions) : 0;
     if (is_array($this->competition->Results) && count($this->competition->Results))
       $num_competitions++;
@@ -38,9 +39,9 @@ class Skoorin_Results_Table {
           <col width="100%">
         </colgroup>
         <thead>
-          <tr>
+          <tr class="hole">
             <?php $colspan = $has_subcompetitions ? 3 : 2; ?>
-            <th class="hole" colSpan="<?php echo $colspan ?>"><?php echo $this->l10n['hole'] ?></th>
+            <th class="hole" colSpan="<?php echo $colspan ?>"></th>
             <?php
               foreach ($this->competition->Tracks as $track)
                 echo "<th>$track->Number</th>";
@@ -71,10 +72,13 @@ class Skoorin_Results_Table {
         </thead>
         <?php
           $colspan = count($this->competition->Tracks) + ($has_subcompetitions ? 7 : $show_previous_rounds_sum ? 6 : 4);
-          foreach ($players_by_classes as $class_name => $players) {
+          foreach ($players_by_classes_filtered as $class_name => $players) {
             if ($class_name != $this->no_class_flag && count($players)) { ?>
               <thead>
-                <th class="class" colSpan="<?php echo $colspan ?>"><?php echo $class_name ?></th>
+                <tr class="class">
+                  <?php $num_players = count($players_by_classes[$class_name]); ?>
+                  <th class="class" colSpan="<?php echo $colspan ?>"><?php echo "$class_name ($num_players)" ?></th>
+                </tr>
               </thead>
             <?php }
             $standing = 0;
