@@ -38,7 +38,7 @@
     }
 
     tbody {
-      &:hover {
+      tr:hover {
         outline: 1px solid lighten(black, 30%);
         outline-offset: 3px
       }
