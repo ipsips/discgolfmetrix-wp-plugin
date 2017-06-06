@@ -76,6 +76,7 @@ const reducers = {
 class Results {
   constructor(el, state) {
     this.el = el
+    this.competitionId = this.el.dataset.competitionId
     this.store = createStore(
       (state, action) => ({
         loading: reducers.loading(state.loading, action),
@@ -90,6 +91,7 @@ class Results {
       this.setState(this.store.getState())
     )
     this.setState(this.store.getState())
+    this.refetchInSeconds(30)
   }
   getInitialState(state) {
     return {
@@ -126,6 +128,13 @@ class Results {
     return state
   }
   render() {
+    const { ID } = getDeepProp(this.state, 'data.results.Competition')
+
+    if (ID && ID != this.competitionId) {
+      this.refetchInSeconds(30)
+      this.competitionId = ID
+    }
+
     if (!this.table)
       this.table = new ResultsTable(
         this.el.querySelector('.skoorin-results-table'),
@@ -212,6 +221,23 @@ class Results {
         [name]: evt.target.value
       }
     })
+  }
+  refetchInSeconds(secs) {
+    clearTimeout(this.refetchTimer)
+    this.refetchTimer = setTimeout(() => {
+      const { ID } = getDeepProp(this.state, 'data.results.Competition')
+
+      if (ID)
+        this.store.dispatch({
+          type: 'API_REQ',
+          payload: {
+            types: ['FETCH_RESULTS_REQ', 'FETCH_RESULTS_RES', 'FETCH_RESULTS_ERR'],
+            query: `content=result&id=${ID}`
+          }
+        })
+      
+      this.refetchInSeconds(secs)
+    }, secs * 1000)
   }
 }
 
