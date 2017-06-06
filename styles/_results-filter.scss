@@ -138,9 +138,7 @@
     float: left;
     margin: 0 0 0 2px;
     width: 30px;
-    padding: 4px 0;
     font-size: inherit;
-    line-height: inherit;
     text-align: center;
     color: black;
     background-color: transparent;
@@ -148,6 +146,10 @@
     border-radius: $border-radius;
     cursor: pointer;
     box-sizing: border-box;
+    display: inline-flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
 
     &:hover, 
     &:focus {
