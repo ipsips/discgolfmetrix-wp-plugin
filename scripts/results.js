@@ -215,13 +215,14 @@ class Results {
   }
 }
 
-for (let results of document.querySelectorAll('.skoorin-results')) {
+const skoorinResults = document.querySelectorAll('.skoorin-results')
+for (let i = 0; i < skoorinResults.length; i++) {
   let resultsData
   try {
-    resultsData = JSON.parse(results.querySelector('.skoorin-results-data').innerHTML)
+    resultsData = JSON.parse(skoorinResults[i].querySelector('.skoorin-results-data').innerHTML)
   } catch(err) {
     console.error('Could not parse results data. This could mean there was a network error when getting the data from Skoorin data API.\n', err)
     break
   }
-  new Results(results, resultsData)
+  new Results(skoorinResults[i], resultsData)
 }
