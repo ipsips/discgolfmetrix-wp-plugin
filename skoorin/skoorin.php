@@ -38,11 +38,12 @@ class Skoorin {
     $this->l10n = $l10n['results'];
 
     add_shortcode('skoorin_results', array($this, 'shortcode_results'));
+    add_shortcode('skoorin_registration_list', array($this, 'shortcode_registration_list'));
     add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_public'), 99);
   }
 
   function enqueue_scripts_public() {
-    if ($this->is_results_shortcode_in_post_content()) {
+    if ($this->is_shortcode_in_post_content('skoorin_results')) {
       wp_enqueue_style('skoorin-results', plugins_url('styles/skoorin-results.css', __FILE__), array(), $this->ver);
       wp_enqueue_script('skoorin-results', plugins_url('scripts/skoorin-results.js', __FILE__), array('jquery'), $this->ver, true);
       wp_localize_script('skoorin-results', 'skoorinResults', array(
@@ -51,16 +52,18 @@ class Skoorin {
         'ajax_url' => admin_url('admin-ajax.php')
       ));
     }
+    if ($this->is_shortcode_in_post_content('skoorin_registration_list'))
+      wp_enqueue_style('skoorin-registration-list', plugins_url('styles/skoorin-registration-list.css', __FILE__), array(), $this->ver);
   }
 
-  function is_results_shortcode_in_post_content() {
+  function is_shortcode_in_post_content($shortcode_key) {
     global $post;
     $pattern = get_shortcode_regex();
 
     return (
       preg_match_all("/$pattern/s", $post->post_content, $matches) &&
       array_key_exists(2, $matches) &&
-      in_array('skoorin_results', $matches[2])
+      in_array($shortcode_key, $matches[2])
     );
   }
   
@@ -134,6 +137,29 @@ class Skoorin {
       ));
       $output .= '</script>';
     
+    $output .= '</div>';
+
+    return $output;
+  }
+
+  function shortcode_registration_list($attributes) {
+    $atts = shortcode_atts($this->defaults['shortcode_results'], $attributes);
+
+    if (!is_numeric($atts['competition_id']))
+      return '';
+    
+    $registration_list = Skoorin_API::get(array(
+      'content' => 'registration_list_html',
+      'id' => $atts['competition_id']
+    ), 'html');
+    $is_api_query_error = function ($response) {
+      return is_array($response) && array_key_exists('error', $response);
+    };
+
+    $output = "<div class='skoorin-registration-list' data-competition-id='$atts[competition_id]'>";
+      $output .= $is_api_query_error($registration_list)
+        ? "$output<p class='error'>{$this->l10n['network_error']}</p>"
+        : $registration_list;
     $output .= '</div>';
 
     return $output;

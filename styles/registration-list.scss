@@ -1,0 +1,76 @@
+@charset 'utf-8';
+
+@import 'variables-and-mixins';
+@import 'results-filter';
+
+.skoorin-registration-list {
+  table {
+    width: auto;
+    font-size: 14px;
+    background-color: darken(white, 3%);
+    border-collapse: collapse;
+    table-layout: auto;
+
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 3px;
+        padding-right: 3px;
+        border: 1px solid $border-color;
+        vertical-align: middle;
+      }
+    }
+
+    thead {
+      th, td {
+        font-weight: bold;
+        background-color: white;
+
+        &:not(:last-child) {
+          border-right-color: transparent;
+        }
+      }
+    }
+
+    tbody {
+      tr:hover {
+        background-color: white;
+      }
+
+      td:first-child {
+        text-align: right;
+      }
+    }
+  }
+
+  #general2 table tbody td:first-child {
+    text-align: left;
+  }
+}
+
+@media (min-width: 800px) {
+  .skoorin-registration-list table {
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+    }
+  }
+}
+
+@media (min-width: 960px) {
+  .skoorin-registration-list table {
+    thead,
+    tbody,
+    tfoot {
+      th, td {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
+  }
+}

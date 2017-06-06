@@ -61,10 +61,10 @@
 
   table {
     width: auto;
-    margin: 0 !important;
     font-size: 14px;
     background-color: darken(white, 3%);
     border-collapse: collapse;
+    table-layout: auto;
 
     thead,
     tbody,
