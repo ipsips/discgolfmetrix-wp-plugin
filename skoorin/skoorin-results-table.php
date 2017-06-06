@@ -20,6 +20,9 @@ class Skoorin_Results_Table {
     $has_subcompetitions = property_exists($this->competition, 'SubCompetitions')
       && is_array($this->competition->SubCompetitions)
       && count($this->competition->SubCompetitions);
+    $show_extras = !$has_subcompetitions
+      && property_exists($this->competition, 'MetrixMode')
+      && (int) $this->competition->MetrixMode == 2;
     $show_previous_rounds_sum = (int) $this->competition->ShowPreviousRoundsSum;
     $aggregated_results = $this->aggregate_results();
     $players_by_classes = $this->filter_players($this->get_players_by_classes($aggregated_results));
@@ -94,7 +97,7 @@ class Skoorin_Results_Table {
                         <td class="standing" rowSpan="<?php echo $num_result_rows ?>"><?php echo $standing; ?></td>
                         <td class="player" rowSpan="<?php echo $num_result_rows ?>">
                           <?php if ($result_row_num == 1)
-                            echo property_exists($this->competition, 'MetrixMode') && (int) $this->competition->MetrixMode == 2
+                            echo $show_extras
                               ? "<a class='expand-metrix' href='#'><i></i> $player->Name</a>"
                               : $player->Name;
                             if (property_exists($player, 'UserID')) {

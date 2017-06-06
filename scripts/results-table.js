@@ -29,8 +29,8 @@ export default class ResultsTable {
   }
   render() {
     const { Competition } = getDeepProp(this.state, 'data.results')
-    const hasExtras = Competition.hasOwnProperty('MetrixMode') && Competition.MetrixMode == 2
     const hasSubcompetitions = !!(Competition.SubCompetitions || []).length
+    const showExtras = !hasSubcompetitions && Competition.hasOwnProperty('MetrixMode') && Competition.MetrixMode == 2
     const showPreviousRoundsSum = Competition.hasOwnProperty('ShowPreviousRoundsSum') && !!parseInt(Competition.ShowPreviousRoundsSum, 10)
     if (this.competitionID != Competition.ID) {
       this.playersByClasses = this.getPlayersByClasses(this.aggregateResults())
@@ -77,7 +77,7 @@ export default class ResultsTable {
                 playersByClasses.byName[className].order.map((playerName, idx) => {
                   const player = playersByClasses.byName[className].byName[playerName]
                   const competitionKeys = Object.keys(player.PlayerResults)
-                  const rowSpan = hasSubcompetitions && hasExtras
+                  const rowSpan = hasSubcompetitions && showExtras
                     ? competitionKeys.length + (competitionKeys.length * Object.keys(extras).length)
                     : competitionKeys.length
                   const totalSum = arraySum(Object.values(player.Sum))
@@ -91,7 +91,7 @@ export default class ResultsTable {
                           {idx !== 0 ? '' : [
                             <td key={[key, competitionKey, 'standing'].join('/')} className="standing" rowSpan={rowSpan}>{player.standing}</td>,
                             <td key={[key, competitionKey, 'player'].join('/')} className="player" rowSpan={rowSpan} title={player.Name}>
-                              {hasExtras
+                              {showExtras
                                 ? <a className="expand-metrix" on-click={this.toggleResultsExtra} href="#">
                                     <i/> {player.Name}
                                   </a>
@@ -125,7 +125,7 @@ export default class ResultsTable {
                         </tr>
                       )
 
-                      return hasExtras
+                      return showExtras
                         ? [scoresRow].concat(this.getExtraRows(player, competitionKey, hasSubcompetitions, showPreviousRoundsSum))
                         : scoresRow
                     })}
