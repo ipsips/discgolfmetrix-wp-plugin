@@ -100,15 +100,17 @@ class Skoorin_Results_Table {
                       <?php if ($result_row_num == 1) { ?>
                         <td class="standing" rowSpan="<?php echo $num_result_rows ?>"><?php echo $standing; ?></td>
                         <td class="player" rowSpan="<?php echo $num_result_rows ?>">
-                          <?php if ($result_row_num == 1)
-                            echo $show_extras
-                              ? "<a class='expand-metrix' href='#'><i></i> $player->Name</a>"
-                              : $player->Name;
-                            if (property_exists($player, 'UserID')) {
-                              $profile_url = sprintf($this->profile_link_fmt, $player->UserID);
-                              echo "<a class='profile-link' target='_blank' href='$profile_url'><span><svg width='100%' height='100%' viewBox='0 0 512 512' preserveAspectRatio='xMidYMid meet'><path d='$this->profile_link_icon_path'/></svg></span></a>";
-                            }
-                          ?>
+                          <div>
+                            <?php if ($result_row_num == 1)
+                              echo $show_extras
+                                ? "<a class='expand-metrix' href='#'><i></i> $player->Name</a>"
+                                : $player->Name;
+                              if (property_exists($player, 'UserID')) {
+                                $profile_url = sprintf($this->profile_link_fmt, $player->UserID);
+                                echo "<a class='profile-link' target='_blank' href='$profile_url'><span><svg width='100%' height='100%' viewBox='0 0 512 512' preserveAspectRatio='xMidYMid meet'><path d='$this->profile_link_icon_path'/></svg></span></a>";
+                              }
+                            ?>
+                          </div>
                         </td>
                       <?php }
                       if ($has_subcompetitions)

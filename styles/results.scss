@@ -4,6 +4,9 @@
 @import 'results-filter';
 
 .skoorin-results {
+  position: relative;
+  z-index: 1;
+
   .error {
     color: red;
     border: 1px solid red;
@@ -70,19 +73,23 @@
     tbody,
     tfoot {
       th, td {
-        padding-left: 3px;
-        padding-right: 3px;
+        padding: 3px;
         text-align: center;
         white-space: nowrap;
         border: 1px solid $border-color;
         vertical-align: middle;
+      }
+      tr:nth-child(n) td {
+        background-color: darken(white, 3%);
       }
     }
 
     thead {
       tr.hole,
       tr.class {
-        background-color: white;
+        th, td {
+          background-color: white;
+        }
       }
       tr.par th {
         font-weight: normal;
@@ -105,8 +112,9 @@
     }
 
     tbody {
-      &:hover {
-        background-color: white;
+      &:not(.expanded):hover {
+        outline: 1px solid lighten(black, 30%);
+        outline-offset: 3px
       }
 
       td.standing {
@@ -115,11 +123,18 @@
 
       td.player {
         text-align: left;
-        overflow: hidden;
-        text-overflow: ellipsis;
         max-width: 160px;
-        position: relative;
-        padding-right: 2.2em;
+
+        >div {
+          position: relative;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding-right: 2.2em;
+        }
 
         a.expand-metrix {
           > i {
@@ -133,7 +148,7 @@
 
         a.profile-link {
           position: absolute;
-          right: 0.5em;
+          right: 0;
           top: 50%;
           margin-top: -0.6em;
           line-height: 1;
@@ -153,41 +168,43 @@
         }
       }
 
-      td.hole-in-one {
-        background-color: $gold-accent;
-      }
+      tr {
+        td.hole-in-one {
+          background-color: $gold-accent;
+        }
 
-      td.eagle {
-        background-color: $success-color;
-      }
+        td.eagle {
+          background-color: $success-color;
+        }
 
-      td.birdie {
-        background-color: rgba($success-color, .4);
-      }
+        td.birdie {
+          background-color: rgba($success-color, .4);
+        }
 
-      td.bogey {
-        background-color: rgba($alert-color, .2);
-      }
+        td.bogey {
+          background-color: rgba($alert-color, .2);
+        }
 
-      td.double-bogey {
-        background-color: rgba($alert-color, .4);
-      }
+        td.double-bogey {
+          background-color: rgba($alert-color, .4);
+        }
 
-      td.fail {
-        background-color: rgba($alert-color, .6);
-      }
+        td.fail {
+          background-color: rgba($alert-color, .6);
+        }
 
-      td.ob {
-        position:relative;
+        td.ob {
+          position:relative;
 
-        &:before {
-          position: absolute;
-          left: 0;
-          top: 0;
-          content: '';
-          width: 100%;
-          height: 4px;
-          background-color: $alert-color;
+          &:before {
+            position: absolute;
+            left: 0;
+            top: 0;
+            content: '';
+            width: 100%;
+            height: 4px;
+            background-color: $alert-color;
+          }
         }
       }
 
@@ -196,10 +213,6 @@
 
         td.player a.expand-metrix > i:before {
           content: '▽';
-        }
-
-        ~ tr.extra {
-          display: table-row;
         }
 
         td {
@@ -213,7 +226,7 @@
           }
         }
 
-        ~ .extra {
+        ~ tr.extra {
             display: table-row;
             
             td {

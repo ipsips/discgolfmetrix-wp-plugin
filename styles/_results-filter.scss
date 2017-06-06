@@ -134,7 +134,7 @@
     }
   }
 
-  .button {
+  .competition-nav-button {
     float: left;
     margin: 0 0 0 2px;
     width: 30px;
@@ -153,8 +153,7 @@
 
     &:hover, 
     &:focus {
-      color: white;
-      background-color: black;
+      background-color: rgba(black, .05);
     }
 
     &.disabled {
@@ -169,7 +168,7 @@
     .select {
       width: 100%;
     }
-    .button {
+    .competition-nav-button {
       display: none;
     }
   }

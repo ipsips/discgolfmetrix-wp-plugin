@@ -89,24 +89,26 @@ export default class ResultsTable {
                   return <tbody key={key}>
                     {competitionKeys.map((competitionKey, idx) => {
                       const scoresRow = (
-                        <tr key={key+'/'+competitionKey}>
+                        <tr key={key+'/'+competitionKey} on-click={this.toggleResultsExtra.bind(this, showExtras)}>
                           {idx !== 0 ? '' : [
                             <td key={[key, competitionKey, 'standing'].join('/')} className="standing" rowSpan={rowSpan}>{player.standing}</td>,
                             <td key={[key, competitionKey, 'player'].join('/')} className="player" rowSpan={rowSpan} title={player.Name}>
-                              {showExtras
-                                ? <a className="expand-metrix" on-click={this.toggleResultsExtra} href="#">
-                                    <i/> {player.Name}
+                              <div>
+                                {showExtras
+                                  ? <a className="expand-metrix" on-click={evt => evt.preventDefault()} href="#">
+                                      <i/> {player.Name}
+                                    </a>
+                                  : player.Name
+                                }
+                                {!player.hasOwnProperty('UserID') ? '' :
+                                  <a
+                                    className="profile-link"
+                                    target="_blank"
+                                    href={`https://dgmtrx.com/?u=player_stat&player_user_id=${player.UserID}`}>
+                                    {h('span', { props: { innerHTML: profileIcon }})}
                                   </a>
-                                : player.Name
-                              }
-                              {!player.hasOwnProperty('UserID') ? '' :
-                                <a
-                                  className="profile-link"
-                                  target="_blank"
-                                  href={`https://dgmtrx.com/?u=player_stat&player_user_id=${player.UserID}`}>
-                                  {h('span', { props: { innerHTML: profileIcon }})}
-                                </a>
-                              }
+                                }
+                              </div>
                             </td>
                           ]}
                           {!hasSubcompetitions ? '' :
@@ -429,16 +431,23 @@ export default class ResultsTable {
         return !!value ? value : ''
     }
   }
-  toggleResultsExtra = (evt) => {
+  toggleResultsExtra = (showExtras, evt) => {
     evt.preventDefault()
+
+    if (!showExtras)
+      return
 
     let tr = evt.target
     
     while (tr.tagName !== 'TR')
       tr = tr.parentNode
 
-    tr.classList.contains('expanded')
-      ? tr.classList.remove('expanded')
-      : tr.classList.add('expanded')
+    if (tr.classList.contains('expanded')) {
+      tr.parentNode.classList.remove('expanded')
+      tr.classList.remove('expanded')
+    } else {
+      tr.parentNode.classList.add('expanded')
+      tr.classList.add('expanded')
+    }
   }
 }

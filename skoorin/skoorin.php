@@ -250,8 +250,8 @@ class Skoorin {
               </ul>
             </div>
           </div>
-          <span class="button small">↑</span>
-          <span class="button small">↓</span>
+          <span class="competition-nav-button small">↑</span>
+          <span class="competition-nav-button small">↓</span>
         </div>
       </div>
     <?php 

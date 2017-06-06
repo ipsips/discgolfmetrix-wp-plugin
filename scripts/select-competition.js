@@ -20,7 +20,7 @@ export default class SelectCompetition {
         this.activeCompetitionIdx = i
     }
 
-    const buttons = el.querySelectorAll('.button')
+    const buttons = el.querySelectorAll('.competition-nav-button')
     this.prevBtn = buttons[0]
     this.nextBtn = buttons[1]
     this.setButtonStates()
