@@ -61,6 +61,8 @@ class Skoorin {
     $pattern = get_shortcode_regex();
 
     return (
+      is_object($post) &&
+      property_exists('post_content', $post) &&
       preg_match_all("/$pattern/s", $post->post_content, $matches) &&
       array_key_exists(2, $matches) &&
       in_array($shortcode_key, $matches[2])
