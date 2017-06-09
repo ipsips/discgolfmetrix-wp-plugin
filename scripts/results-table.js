@@ -18,8 +18,9 @@ const extras = {
 const addPlus = (value) => (parseFloat(value) > 0 ? '+' : '')+value
 
 export default class ResultsTable {
-  constructor(el, state) {
+  constructor(el, state, onChange) {
     this.el = el
+    this.onChange = onChange
     this.competitionID = null
     this.setState(state)
   }
@@ -179,6 +180,11 @@ export default class ResultsTable {
                   <th><a
                     target="_blank"
                     href={`https://dgmtrx.com/?u=player_stat&player_user_id=${event.ID}`}
+                    on-click={evt => {
+                      evt.preventDefault()
+                      if (typeof this.onChange === 'function')
+                        this.onChange(event.ID, true)
+                    }}
                     >
                     {event.Name}
                   </a></th>

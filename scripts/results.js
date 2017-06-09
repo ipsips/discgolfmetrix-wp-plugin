@@ -138,7 +138,8 @@ class Results {
     if (!this.table)
       this.table = new ResultsTable(
         this.el.querySelector('.skoorin-results-table'),
-        this.state
+        this.state,
+        this.onCompetitionSelect
       )
     else
       this.table.setState(this.state)
@@ -191,7 +192,17 @@ class Results {
 
     this.filters[name].container = patch(this.filters[name].container, container)
   }
-  onCompetitionSelect = (competitionId) => {
+  onCompetitionSelect = (competitionId, external = false) => {
+    /**
+     * Select competition if this callback is not called from
+     * this.competitionSelect (eg. click on competition name in tour summary
+     * table head).
+     */
+    if (external && this.competitionSelect)
+      for (let i = 0; i < this.competitionSelect.competitions.length; i++)
+        if (this.competitionSelect.competitions[i].dataset.id == competitionId)
+          this.competitionSelect.selectCompetition(this.competitionSelect.competitions[i])
+
     // clear filters
     this.store.dispatch({
       type: 'FILTER',
