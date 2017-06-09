@@ -29,6 +29,18 @@ export default class ResultsTable {
   }
   render() {
     const { Competition } = getDeepProp(this.state, 'data.results')
+    
+    const table = !!Competition.ShowTourView
+      ? this.getTourSummaryTable(Competition)
+      : this.getCompetitionResultsTable(Competition)
+
+    // clear SSR table before patching in a vnode
+    if (this.el instanceof Element)
+      this.el.innerHTML = ''
+
+    this.el = patch(this.el, table)
+  }
+  getCompetitionResultsTable(Competition) {
     const hasSubcompetitions = !!(Competition.SubCompetitions || []).length
     const showExtras = !hasSubcompetitions && Competition.hasOwnProperty('MetrixMode') && Competition.MetrixMode == 2
     const showPreviousRoundsSum = Competition.hasOwnProperty('ShowPreviousRoundsSum') && !!parseInt(Competition.ShowPreviousRoundsSum, 10)
@@ -40,10 +52,11 @@ export default class ResultsTable {
     }
     let parTotal = 0, colSpan = hasSubcompetitions ? 3 : 2
     const playersByClasses = this.filterPlayers()
-    const table = (
+    
+    return (
       <div className="skoorin-results-table" class-loading={this.state.loading}>
         <div className="skoorin-results-table-container table-scroll table-responsive">
-          <table>
+          <table key={Competition.ID}>
             <colgroup>
               <col width="0%"/>
               <col width="100%"/>
@@ -54,7 +67,7 @@ export default class ResultsTable {
                 {this.state.data.results.Competition.Tracks.map(({ Number }, idx) =>
                   <th>{Number}</th>
                 )}
-                <th>{window.skoorinResults.l10n.tot}</th>
+                <th>{window.skoorinResults.l10n.sum}</th>
                 <th>{window.skoorinResults.l10n.to_par}</th>
                 {hasSubcompetitions || showPreviousRoundsSum ? [<th/>, <th/>] : ''}
               </tr>
@@ -142,12 +155,79 @@ export default class ResultsTable {
         <span className="spinner"><i/><i/></span>
       </div>
     )
+  }
+  getTourSummaryTable(Competition) {
+    if (this.competitionID != Competition.ID) {
+      this.playersByClasses = this.getPlayersByClasses(this.aggregateResults())
+      this.competitionID = Competition.ID
+    }
+    const playersByClasses = this.filterPlayers()
 
-    // clear SSR table before patching in a vnode
-    if (this.el instanceof Element)
-      this.el.innerHTML = ''
+    return (
+      <div className="skoorin-results-table" class-loading={this.state.loading}>
+        <div className="skoorin-results-table-container table-scroll table-responsive">
+          <table key={Competition.ID}>
+            <colgroup>
+              <col width="0%"/>
+              <col width="100%"/>
+            </colgroup>
+            <thead>
+              <tr className="tour-head">
+                <th></th>
+                <th></th>
+                {Competition.Events.map(event =>
+                  <th><a
+                    target="_blank"
+                    href={`https://dgmtrx.com/?u=player_stat&player_user_id=${event.ID}`}
+                    >
+                    {event.Name}
+                  </a></th>
+                )}
+                <th>{window.skoorinResults.l10n.total}</th>
+              </tr>
+            </thead>
+            {playersByClasses.order.map((className) =>
+              [className == noClassFlag || !playersByClasses.byName[className].order.length ? '' :
+                <thead key={Competition.ID+'/'+className}>
+                  <tr className="class">
+                    <th className="class" colSpan={Competition.Events.length + 3}>{`${className} (${this.playersByClasses.byName[className].order.length})`}</th>
+                  </tr>
+                </thead>,
+                playersByClasses.byName[className].order.map((playerName, idx) => {
+                  const player = playersByClasses.byName[className].byName[playerName]
+                  const key = Competition.ID+'/'+(player.UserID || player.Name)
 
-    this.el = patch(this.el, table)
+                  return <tbody key={key}>
+                    <tr>
+                      <td className="standing">{player.Place}</td>
+                      <td className="player">
+                        {!player.hasOwnProperty('UserID')
+                          ? player.Name
+                          : <a
+                              target="_blank"
+                              href={`https://dgmtrx.com/?u=player_stat&player_user_id=${player.UserID}`}
+                              >
+                              {player.Name}
+                            </a>
+                        }
+                      </td>
+                      {Competition.Events.map((event, idx) =>
+                        <td>{typeof player.EventResults[idx] === 'number' || typeof player.EventResults[idx] === 'string'
+                          ? player.EventResults[idx]
+                          : ''
+                        }</td>
+                      )}
+                      <td className="total">{player.Total}</td>
+                    </tr>
+                  </tbody>
+                })
+              ]
+            )}
+          </table>
+        </div>
+        <span className="spinner"><i/><i/></span>
+      </div>
+    )
   }
   /**
    * Aggregates results and subcompetition results
@@ -155,23 +235,31 @@ export default class ResultsTable {
   aggregateResults() {
     const players = { byName: {}, order: [] }
     const add = (competition) => {
+      const isTour = !!Competition.ShowTourView
       const competitionKey = competition.Date+'T'+competition.Time
+      const results = isTour
+        ? competition.TourResults
+        : competition.Results
 
-      ;(competition.Results || []).forEach(player => {
+      ;(results || []).forEach(player => {
         if (!players.byName.hasOwnProperty(player.Name)) {
           players.byName[player.Name] = Object.assign({}, player)
-          players.byName[player.Name].Sum = {}
-          players.byName[player.Name].Diff = {}
-          players.byName[player.Name].PlayerResults = { [competitionKey]: [] }
+          if (!isTour) {
+            players.byName[player.Name].Sum = {}
+            players.byName[player.Name].Diff = {}
+            players.byName[player.Name].PlayerResults = { [competitionKey]: [] }
+          }
           players.order.push(player.Name)
         }
-        players.byName[player.Name].Sum[competitionKey] = player.Sum
-        players.byName[player.Name].Diff[competitionKey] = player.Diff
-        players.byName[player.Name].PlayerResults[competitionKey] = []
+        if (!isTour) {
+          players.byName[player.Name].Sum[competitionKey] = player.Sum
+          players.byName[player.Name].Diff[competitionKey] = player.Diff
+          players.byName[player.Name].PlayerResults[competitionKey] = []
 
-        ;(player.PlayerResults || []).forEach(score =>
-          players.byName[player.Name].PlayerResults[competitionKey].push(score)
-        )
+          ;(player.PlayerResults || []).forEach(score =>
+            players.byName[player.Name].PlayerResults[competitionKey].push(score)
+          )
+        }
       })
 
       if (competition.SubCompetitions)

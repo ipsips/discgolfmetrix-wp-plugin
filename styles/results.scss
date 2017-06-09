@@ -86,7 +86,8 @@
 
     thead {
       tr.hole,
-      tr.class {
+      tr.class,
+      tr.tour-head {
         th, td {
           background-color: white;
         }
@@ -94,7 +95,8 @@
       tr.par th {
         font-weight: normal;
       }
-      tr.hole {
+      tr.hole,
+      tr.tour-head {
         th:not(:last-child) {
           border-right-color: transparent;
         }

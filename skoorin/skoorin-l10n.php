@@ -12,7 +12,8 @@ $skoorin_l10n = array(
     ),
     'hole' => __('Hole', 'skoorin'),
     'par' => __('Par', 'skoorin'),
-    'tot' => __('Sum', 'skoorin'),
+    'sum' => __('Sum', 'skoorin'),
+    'total' => __('Total', 'skoorin'),
     'to_par' => __('+/-', 'skoorin'),
     'extra' => array(
       'BUE' => __('Bullseye hit', 'skoorin'),

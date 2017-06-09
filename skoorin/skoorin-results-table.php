@@ -9,6 +9,7 @@ class Skoorin_Results_Table {
     $this->l10n = $l10n;
     $this->sub_competition_date_fmt = 'm/d/y H:i';
     $this->no_class_flag = '$___NO_CLASS';
+    $this->event_link_fmt = 'https://dgmtrx.com/?u=scorecard&ID=%s';
     $this->profile_link_fmt = 'https://dgmtrx.com/?u=player_stat&player_user_id=%s';
     $this->profile_link_icon_path = $profile_link_icon_path;
   }
@@ -17,6 +18,13 @@ class Skoorin_Results_Table {
    * Returns the results table markup
    */
   function get() {
+    return property_exists($this->competition, 'ShowTourView')
+      && !!$this->competition->ShowTourView
+        ? $this->get_tour_summary_table()
+        : $this->get_competition_results_table();
+  }
+
+  function get_competition_results_table() {
     $has_subcompetitions = property_exists($this->competition, 'SubCompetitions')
       && is_array($this->competition->SubCompetitions)
       && count($this->competition->SubCompetitions);
@@ -46,7 +54,7 @@ class Skoorin_Results_Table {
               foreach ($this->competition->Tracks as $track)
                 echo "<th>$track->Number</th>";
             ?>
-            <th><?php echo $this->l10n['tot'] ?></th>
+            <th><?php echo $this->l10n['sum'] ?></th>
             <th><?php echo $this->l10n['to_par'] ?></th>
             <?php
               if ($has_subcompetitions || $show_previous_rounds_sum)
@@ -133,6 +141,72 @@ class Skoorin_Results_Table {
               </tbody>
             <?php }
           } ?>
+      </table>
+    <?php
+    return ob_get_clean();
+  }
+
+  function get_tour_summary_table() {
+    $events = $this->competition->Events;
+    $players_by_classes = $this->get_players_by_classes($this->competition->TourResults);
+    $players_by_classes_filtered = $this->filter_players($players_by_classes);
+
+    ob_start();
+    ?>
+      <table>
+        <colgroup>
+          <col width="0%">
+          <col width="100%">
+        </colgroup>
+        <thead>
+          <tr class="tour-head">
+            <th></th>
+            <th></th>
+            <?php
+              foreach ($events as $event) {
+                $event_link = sprintf($this->event_link_fmt, $event->ID);
+                echo "<th><a target='_blank' href='$event_link'>$event->Name</th>";
+              }
+            ?>
+            <th><?php echo $this->l10n['total'] ?></th>
+          </tr>
+        </thead>
+          <?php
+            foreach ($players_by_classes_filtered as $class_name => $players) {
+              if ($class_name != $this->no_class_flag && count($players)) { ?>
+                <thead>
+                  <tr class="class">
+                    <?php
+                      $colspan = count($events) + 3;
+                      $num_players = count($players_by_classes[$class_name]);
+                    ?>
+                    <th class="class" colSpan="<?php echo $colspan ?>"><?php echo "$class_name ($num_players)" ?></th>
+                  </tr>
+                </thead>
+              <?php }
+              foreach ($players as $name => $player) { ?>
+                <tbody>
+                  <tr>
+                    <td class="standing"><?php echo $player->Place ?></td>
+                    <td class="player">
+                      <?php 
+                        if (property_exists($player, 'UserID')) {
+                          $profile_url = sprintf($this->profile_link_fmt, $player->UserID);
+                          echo "<a target='_blank' href='$profile_url'>$player->Name</a>";
+                        } else
+                          echo $player->Name;
+                      ?>
+                    </td>
+                    <?php
+                      foreach ($events as $idx => $event)
+                        echo "<td>{$player->EventResults[$idx]}</td>";
+                    ?>
+                    <td class="total"><?php echo $player->Total ?></td>
+                  </tr>
+                </tbody>
+              <?php }
+            }
+          ?>
       </table>
     <?php
     return ob_get_clean();
