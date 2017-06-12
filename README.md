@@ -1,6 +1,6 @@
 # Skoorin WP #
 
-Embed skoorin.com content into wordpress using the shortcode:
+Embed [dgmtrx.com](https://dgmtrx.com) content into wordpress using shortcodes `[skoorin_results]` and `[skoorin_registration_list]` providing a competition ID and optionally a preselected filter. Examples:
 
 ```
 [skoorin_results competition_id="999999"]
