@@ -59,7 +59,7 @@ export default class ResultsTable {
         <div className="skoorin-results-table-container table-scroll table-responsive">
           <table key={Competition.ID}>
             <colgroup>
-              <col width="0%"/>
+              <col width="1%"/>
               <col width="100%"/>
             </colgroup>
             <thead>
@@ -169,7 +169,7 @@ export default class ResultsTable {
         <div className="skoorin-results-table-container table-scroll table-responsive">
           <table key={Competition.ID}>
             <colgroup>
-              <col width="0%"/>
+              <col width="1%"/>
               <col width="100%"/>
             </colgroup>
             <thead>

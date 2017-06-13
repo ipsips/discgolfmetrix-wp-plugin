@@ -43,7 +43,7 @@ class Skoorin_Results_Table {
     ?>
       <table>
         <colgroup>
-          <col width="0%">
+          <col width="1%">
           <col width="100%">
         </colgroup>
         <thead>
@@ -155,7 +155,7 @@ class Skoorin_Results_Table {
     ?>
       <table>
         <colgroup>
-          <col width="0%">
+          <col width="1%">
           <col width="100%">
         </colgroup>
         <thead>
