@@ -90,7 +90,7 @@ class Skoorin_Settings {
       'competitions' => array('ID' => 0, 'Name' => $this->l10n['settings']['competitions']),
       'players' => array(array('Name' => $this->l10n['results']['all']['players'])),
       'classes' => array(array('Name' => $this->l10n['results']['all']['classes'])),
-      'groups' => array(array('Name' => $this->l10n['results']['all']['groups']))
+      'groups' => array(array('Number' => $this->l10n['results']['all']['groups']))
     );
     $filters_selected = array();
 
