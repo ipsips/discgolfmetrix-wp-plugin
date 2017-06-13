@@ -5,7 +5,7 @@ import 'core-js/es6/weak-map'
 import { html } from 'snabbdom-jsx'
 import h from 'snabbdom/h'
 import { patch } from './util/snabbdom'
-import { deepCopy, getDeepProp, arraySum } from './util'
+import { deepCopy, getDeepProp, arraySum, getIOSVer } from './util'
 
 const profileIcon = `<svg width="100%" height="100%" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="${window.skoorinResults.profile_link_icon_path}"/></svg>`
 const noClassFlag = '$___NO_CLASS'
@@ -24,6 +24,7 @@ export default class ResultsTable {
     this.el = el
     this.onChange = onChange
     this.competitionID = null
+    this.iOSVer = getIOSVer()
     this.setState(state)
   }
   setState(state) {
@@ -57,7 +58,7 @@ export default class ResultsTable {
     const playersByClasses = this.filterPlayers()
     
     return (
-      <div className="skoorin-results-table" class-loading={this.state.loading}>
+      <div className={`skoorin-results-table ${this.iOSVer ? 'ios' : ''}`} class={{ loading: this.state.loading }}>
         <div className="skoorin-results-table-container table-scroll table-responsive">
           <table key={Competition.ID}>
             <colgroup>
@@ -167,7 +168,7 @@ export default class ResultsTable {
     const playersByClasses = this.filterPlayers()
 
     return (
-      <div className="skoorin-results-table" class-loading={this.state.loading}>
+      <div className={`skoorin-results-table ${this.iOSVer ? 'ios' : ''}`} class={{ loading: this.state.loading }}>
         <div className="skoorin-results-table-container table-scroll table-responsive">
           <table key={Competition.ID}>
             <colgroup>
