@@ -279,5 +279,9 @@
 
   &.touch select[multiple] {
     min-height: 0;
+
+    &.visible {
+      height: 100%;
+    }
   }
 }
