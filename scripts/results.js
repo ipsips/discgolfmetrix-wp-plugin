@@ -14,7 +14,6 @@ import SelectPlayers from './select-players'
 import ResultsTable from './results-table'
 import { getDeepProp, getMultiSelectValue } from './util'
 
-console.log('hello')
 const reducers = {
   loading(state, action) {
     switch (action.type) {
