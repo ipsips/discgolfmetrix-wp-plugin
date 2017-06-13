@@ -1,6 +1,7 @@
 /** @jsx html */
 import 'core-js/fn/object/values'
 import 'core-js/fn/symbol'
+import 'core-js/es6/weak-map'
 import { html } from 'snabbdom-jsx'
 import h from 'snabbdom/h'
 import { patch } from './util/snabbdom'
