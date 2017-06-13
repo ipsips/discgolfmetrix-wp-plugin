@@ -101,6 +101,9 @@ export default class SelectPlayers {
         }
 
       this.setState(newState)
+      
+      // IE workaround
+      document.querySelector('.skoorin-results-filter select.placeholder').blur()
     }
   }
   close() {
