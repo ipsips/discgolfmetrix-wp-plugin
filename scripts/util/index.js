@@ -1,3 +1,6 @@
+// to support array spread op in getMultiSelectValue() below in IE11
+import 'core-js/fn/array/from'
+
 export function getDeepProp(obj, path, delim = '.') {
   const arr = path instanceof Array
     ? path
