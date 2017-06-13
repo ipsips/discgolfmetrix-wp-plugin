@@ -39,5 +39,8 @@
     "url-loader": "^0.5.7",
     "webpack": "^1.13.3",
     "webpack-stream": "^3.2.0"
+  },
+  "dependencies": {
+    "promise-polyfill": "^6.0.2"
   }
 }

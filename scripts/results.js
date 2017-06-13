@@ -1,4 +1,9 @@
 /** @jsx html */
+
+import Promise from 'promise-polyfill'
+if (!window.Promise)
+  window.Promise = Promise
+
 import './util/optimizedResize'
 import { html } from 'snabbdom-jsx'
 import { patch } from './util/snabbdom'
@@ -9,6 +14,7 @@ import SelectPlayers from './select-players'
 import ResultsTable from './results-table'
 import { getDeepProp, getMultiSelectValue } from './util'
 
+console.log('hello')
 const reducers = {
   loading(state, action) {
     switch (action.type) {
