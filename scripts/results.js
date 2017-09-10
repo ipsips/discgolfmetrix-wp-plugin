@@ -43,8 +43,8 @@ const reducers = {
       case 'FETCH_FILTER_RES':
         const gotFilterData = !!getDeepProp(action, 'response.competitions')
 
-        if (!gotFilterData)
-          alert(window.discgolfmetrixResults.l10n.missing_data_error)
+        // if (!gotFilterData)
+        //   alert(window.discgolfmetrixResults.l10n.missing_data_error)
 
         return !gotFilterData
           ? state
@@ -54,7 +54,7 @@ const reducers = {
           }
       case 'FETCH_RESULTS_ERR':
       case 'FETCH_FILTER_ERR':
-        alert(window.discgolfmetrixResults.l10n.network_error)
+        // alert(window.discgolfmetrixResults.l10n.network_error)
       default:
         return state
     }
