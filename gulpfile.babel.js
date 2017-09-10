@@ -28,9 +28,9 @@ function build() {
 function watch() {
   livereload.listen()
 
-  // gulp.watch('skoorin/readme.txt', readme)
+  // gulp.watch('discgolfmetrix/readme.txt', readme)
   gulp.watch('styles/*.scss', styles)
-  gulp.watch(['skoorin/scripts/*.js', 'skoorin/styles/**/*.css', 'skoorin/**/*.php'], (evt) =>
+  gulp.watch(['discgolfmetrix/scripts/*.js', 'discgolfmetrix/styles/**/*.css', 'discgolfmetrix/**/*.php'], (evt) =>
     livereload.changed(evt.path)
   )
 
@@ -45,12 +45,12 @@ function watch() {
 
 function styles() {
   return gulp.src('styles/[^_]*.scss')
-    .pipe(rename(path => path.basename = `skoorin-${path.basename}`))
+    .pipe(rename(path => path.basename = `discgolfmetrix-${path.basename}`))
     .pipe(sourcemaps.init())
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(postcss([autoprefixer(/* project-wide options are in browserslist file in project root */)]))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('skoorin/styles'))
+    .pipe(gulp.dest('discgolfmetrix/styles'))
 }
 
 function scripts(config) {
@@ -59,7 +59,7 @@ function scripts(config) {
       console.error(err.stack || err)
       this.emit('end')
     })
-    .pipe(gulp.dest('skoorin/scripts'))
+    .pipe(gulp.dest('discgolfmetrix/scripts'))
 }
 
 function getWebpackBaseConfig() {
@@ -94,13 +94,13 @@ function getWebpackBaseConfig() {
       ...config,
       entry: './scripts/results.js',
       output: {
-        filename: 'skoorin-results.js'
+        filename: 'discgolfmetrix-results.js'
       }
     }, {
       ...config,
       entry: './scripts/settings.js',
       output: {
-        filename: 'skoorin-settings.js'
+        filename: 'discgolfmetrix-settings.js'
       }
     }]
   }
@@ -108,7 +108,7 @@ function getWebpackBaseConfig() {
 
 /*function readme() {
   return gulp
-    .src('skoorin/readme.txt')
+    .src('discgolfmetrix/readme.txt')
     .pipe(readmeToMD({
       screenshot_url: 'screenshots/{screenshot}.{ext}',
       screenshot_ext: 'gif',
@@ -117,10 +117,10 @@ function getWebpackBaseConfig() {
     .pipe(gulp.dest('.'))
 
   /* add screenshots to README.md manually:
-  ![](skoorin/screenshot-1.gif)<br>
+  ![](discgolfmetrix/screenshot-1.gif)<br>
   1. Results table with filter
 
-  ![](skoorin/screenshot-2.gif)<br>
+  ![](discgolfmetrix/screenshot-2.gif)<br>
   2. Results filter options
   *
 }*/

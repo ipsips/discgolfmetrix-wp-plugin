@@ -26,7 +26,7 @@ export default store => next => action => {
 }
 
 function callApi(payload, store) {
-  const url = `https://dgmtrx.com/api.php?${payload.query}`
+  const url = `https://discgolfmetrix.com/api.php?${payload.query}`
   const opts = {
     credentials: 'same-origin',
     method: payload.verb || (payload.data ? 'POST' : 'GET'),

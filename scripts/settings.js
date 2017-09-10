@@ -1,12 +1,12 @@
 const $ = jQuery
 
-class SkoorinSettings {
+class DiscGolfMetrixSettings {
   constructor() {
     this.$filtersSelected = $('.filters-selected')
-    this.$filtersSelectedInput = $('input[name="skoorin_options[results_filter]"]')
+    this.$filtersSelectedInput = $('input[name="discgolfmetrix_options[results_filter]"]')
 
-    $('.skoorin-results-filter').sortable({
-      connectWith: '.skoorin-results-filter'
+    $('.discgolfmetrix-results-filter').sortable({
+      connectWith: '.discgolfmetrix-results-filter'
     })
 
     this.$filtersSelected.on('sortupdate', this.onFiltersUpdate)
@@ -22,4 +22,4 @@ class SkoorinSettings {
   }
 }
 
-new SkoorinSettings()
+new DiscGolfMetrixSettings()

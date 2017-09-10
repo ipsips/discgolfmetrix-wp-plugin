@@ -3,7 +3,7 @@
 @import 'variables-and-mixins';
 @import 'results-filter';
 
-.skoorin-registration-list {
+.discgolfmetrix-registration-list {
   table {
     width: auto;
     font-size: 14px;
@@ -63,7 +63,7 @@
 }
 
 @media (min-width: 800px) {
-  .skoorin-registration-list table {
+  .discgolfmetrix-registration-list table {
     thead,
     tbody,
     tfoot {
@@ -76,7 +76,7 @@
 }
 
 @media (min-width: 960px) {
-  .skoorin-registration-list table {
+  .discgolfmetrix-registration-list table {
     thead,
     tbody,
     tfoot {

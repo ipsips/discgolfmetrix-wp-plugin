@@ -34,11 +34,11 @@ export default class SelectCompetition {
     })
   }
   getOverlay() {
-    let overlay = document.querySelector('.skoorin-select-competitions-overlay')
+    let overlay = document.querySelector('.discgolfmetrix-select-competitions-overlay')
 
     if (!overlay) {
       overlay = document.createElement('div')
-      overlay.setAttribute('class', 'skoorin-select-competitions-overlay')
+      overlay.setAttribute('class', 'discgolfmetrix-select-competitions-overlay')
       document.body.insertBefore(overlay, null)
     }
     

@@ -2,7 +2,7 @@
 
 @import 'variables-and-mixins';
 
-.skoorin-select-competitions {
+.discgolfmetrix-select-competitions {
   width: 100%;
   display: flex;
 
@@ -165,7 +165,7 @@
 }
 
 @media (max-width: 900px) {
-  .skoorin-select-competitions {
+  .discgolfmetrix-select-competitions {
     .select {
       width: 100%;
     }
@@ -176,7 +176,7 @@
 }
 
 @media (max-width: 640px) {
-  .skoorin-select-competitions {
+  .discgolfmetrix-select-competitions {
     .options {
       min-width: 180px;
       max-width: 90vw;
@@ -187,7 +187,7 @@
 }
 
 /* overlay behind the menu in nvp (<= 640px) */
-.skoorin-select-competitions-overlay {
+.discgolfmetrix-select-competitions-overlay {
   position: fixed;
   z-index: 1;
   left: 0;
@@ -198,7 +198,7 @@
   display: none;
 }
 
-.skoorin-results-filter {
+.discgolfmetrix-results-filter {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
@@ -210,7 +210,7 @@
     margin: 5px;
     max-width: 100%;
 
-    &.skoorin-results-filter-control-select-competitions {
+    &.discgolfmetrix-results-filter-control-select-competitions {
       display: inline-flex;
       justify-content: flex-start;
       flex-grow: 1;
@@ -223,7 +223,7 @@
     }
   }
 
-  + .skoorin-results-table {
+  + .discgolfmetrix-results-table {
     margin-top: 20px;
   }
 
@@ -244,7 +244,7 @@
   }
 }
 
-.skoorin-results-filter-control-select-players {
+.discgolfmetrix-results-filter-control-select-players {
   position: relative;
   min-width: 180px;
 

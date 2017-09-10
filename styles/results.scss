@@ -3,7 +3,7 @@
 @import 'variables-and-mixins';
 @import 'results-filter';
 
-.skoorin-results {
+.discgolfmetrix-results {
   position: relative;
   z-index: 1;
 
@@ -15,7 +15,7 @@
   }
 }
 
-.skoorin-results-table {
+.discgolfmetrix-results-table {
   min-height: 32px;
 
   >div {
@@ -286,7 +286,7 @@
 }
 
 @media (min-width: 800px) {
-  .skoorin-results-table table {
+  .discgolfmetrix-results-table table {
     thead,
     tbody,
     tfoot {
@@ -299,7 +299,7 @@
 }
 
 @media (min-width: 960px) {
-  .skoorin-results-table table {
+  .discgolfmetrix-results-table table {
     thead,
     tbody,
     tfoot {

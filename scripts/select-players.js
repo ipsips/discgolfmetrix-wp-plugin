@@ -36,7 +36,7 @@ export default class SelectPlayers {
       <div
         key="container"
         class={{
-          'skoorin-results-filter-control-select-players': 1,
+          'discgolfmetrix-results-filter-control-select-players': 1,
           'no-options': !options.length,
           touch: this.state.touch
         }}
@@ -46,10 +46,10 @@ export default class SelectPlayers {
         <select class={{ placeholder:1, visible: !this.state.showMultiselect }}>
           <option>
             {isAllSelected
-              ? window.skoorinResults.l10n.all.players
+              ? window.discgolfmetrixResults.l10n.all.players
               : selected.length === 1
                 ? selected[0]
-                : window.skoorinResults.l10n.multiple.players
+                : window.discgolfmetrixResults.l10n.multiple.players
             }
           </option>
         </select>
@@ -63,7 +63,7 @@ export default class SelectPlayers {
           class={{ visible: this.state.showMultiselect }}
           >
           <option key="all" value="all" selected={isAllSelected}>
-            {window.skoorinResults.l10n.all.players}
+            {window.discgolfmetrixResults.l10n.all.players}
           </option>
           {options.map(({ Name }) =>
             <option
@@ -103,7 +103,7 @@ export default class SelectPlayers {
       this.setState(newState)
       
       // IE workaround
-      document.querySelector('.skoorin-results-filter select.placeholder').blur()
+      document.querySelector('.discgolfmetrix-results-filter select.placeholder').blur()
     }
   }
   close() {

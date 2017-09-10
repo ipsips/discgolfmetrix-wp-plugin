@@ -2,8 +2,8 @@
 if (!defined('ABSPATH'))
   exit;
 
-class Skoorin_API {
-  public static $url = 'https://dgmtrx.com/api.php';
+class DiscGolfMetrix_API {
+  public static $url = 'https://discgolfmetrix.com/api.php';
   public static function get($params, $content_type = 'json') {
     if (!is_array($params))
       return null;

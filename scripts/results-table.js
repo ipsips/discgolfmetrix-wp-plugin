@@ -7,7 +7,7 @@ import h from 'snabbdom/h'
 import { patch } from './util/snabbdom'
 import { deepCopy, getDeepProp, arraySum, getIOSVer } from './util'
 
-const profileIcon = `<svg width="100%" height="100%" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="${window.skoorinResults.profile_link_icon_path}"/></svg>`
+const profileIcon = `<svg width="100%" height="100%" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><path d="${window.discgolfmetrixResults.profile_link_icon_path}"/></svg>`
 const noClassFlag = '$___NO_CLASS'
 const extras = {
   BUE: { type: Boolean, totalFmt: 'percent' },
@@ -58,8 +58,8 @@ export default class ResultsTable {
     const playersByClasses = this.filterPlayers()
     
     return (
-      <div className={`skoorin-results-table ${this.iOSVer ? 'ios' : ''}`} class={{ loading: this.state.loading }}>
-        <div className="skoorin-results-table-container table-scroll table-responsive">
+      <div className={`discgolfmetrix-results-table ${this.iOSVer ? 'ios' : ''}`} class={{ loading: this.state.loading }}>
+        <div className="discgolfmetrix-results-table-container table-scroll table-responsive">
           <table key={Competition.ID}>
             <colgroup>
               <col width="1%"/>
@@ -71,12 +71,12 @@ export default class ResultsTable {
                 {this.state.data.results.Competition.Tracks.map(({ Number }, idx) =>
                   <th>{Number}</th>
                 )}
-                <th>{window.skoorinResults.l10n.sum}</th>
-                <th>{window.skoorinResults.l10n.to_par}</th>
+                <th>{window.discgolfmetrixResults.l10n.sum}</th>
+                <th>{window.discgolfmetrixResults.l10n.to_par}</th>
                 {hasSubcompetitions || showPreviousRoundsSum ? [<th/>, <th/>] : ''}
               </tr>
               <tr className="par">
-                <th className="par" colSpan={colSpan}>{window.skoorinResults.l10n.par}</th>
+                <th className="par" colSpan={colSpan}>{window.discgolfmetrixResults.l10n.par}</th>
                 {this.state.data.results.Competition.Tracks.map(({ Par }, idx) => {
                   parTotal += parseInt(Par, 10)
                   return <th>{Par}</th>
@@ -168,8 +168,8 @@ export default class ResultsTable {
     const playersByClasses = this.filterPlayers()
 
     return (
-      <div className={`skoorin-results-table ${this.iOSVer ? 'ios' : ''}`} class={{ loading: this.state.loading }}>
-        <div className="skoorin-results-table-container table-scroll table-responsive">
+      <div className={`discgolfmetrix-results-table ${this.iOSVer ? 'ios' : ''}`} class={{ loading: this.state.loading }}>
+        <div className="discgolfmetrix-results-table-container table-scroll table-responsive">
           <table key={Competition.ID}>
             <colgroup>
               <col width="1%"/>
@@ -192,7 +192,7 @@ export default class ResultsTable {
                     {event.Name}
                   </a></th>
                 )}
-                <th>{window.skoorinResults.l10n.total}</th>
+                <th>{window.discgolfmetrixResults.l10n.total}</th>
               </tr>
             </thead>
             {playersByClasses.order.map((className) =>
@@ -451,11 +451,11 @@ export default class ResultsTable {
       score.Diff,
       scoreClass.title,
       scoreClass.isOB
-        ? window.skoorinResults.l10n.score_tooltip_ob.replace(/&#013;/g, '\n')
+        ? window.discgolfmetrixResults.l10n.score_tooltip_ob.replace(/&#013;/g, '\n')
         : ''
     ]
     let mIdx = -1
-    const titleAtt = window.skoorinResults.l10n.score_tooltip
+    const titleAtt = window.discgolfmetrixResults.l10n.score_tooltip
       .replace(/&#013;/g, '\n')
       .replace(/%s/g, () => {
         mIdx++
@@ -496,7 +496,7 @@ export default class ResultsTable {
     }
 
     return {
-      title: window.skoorinResults.l10n.score_terms[className],
+      title: window.discgolfmetrixResults.l10n.score_terms[className],
       isOB,
       class: className+obClass
     }
@@ -507,7 +507,7 @@ export default class ResultsTable {
     return Object.keys(extras).map(extraKey => {
       const key = [Competition.ID, competitionKey, (player.UserID || player.Name), extraKey].join('/')
       return <tr key={key} className={`extra ${extraKey.toLowerCase()}`}>
-        <td colSpan={hasSubcompetitions ? 1 : 2}>{window.skoorinResults.l10n.extra[extraKey]}</td>
+        <td colSpan={hasSubcompetitions ? 1 : 2}>{window.discgolfmetrixResults.l10n.extra[extraKey]}</td>
         {player.PlayerResults[competitionKey].map((score, idx) =>
           <td key={`${key}/${idx}`}>{this.getExtraNotation(score, extraKey)}</td>
         )}

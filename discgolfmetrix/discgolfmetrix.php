@@ -1,29 +1,29 @@
 <?php
 /*
-Plugin Name:  Skoorin
-Plugin URI:   http://skoorin.com
-Description:  Embed skoorin.com content into wordpress. Requires PHP ver 5.4 or higher
+Plugin Name:  Disc Golf Metrix
+Plugin URI:   http://discgolfmetrix.com
+Description:  Embed discgolfmetrix.com content into wordpress. Requires PHP ver 5.4 or higher
 Version:      2.0.0
 Author:       Ivar Oja
 Author URI:   http://ips.re
 License:      Apache License 2.0
 License URI:  https://www.apache.org/licenses/LICENSE-2.0.txt
-Text Domain:  skoorin
+Text Domain:  discgolfmetrix
 Domain Path:  /languages
 */
 
 if (!defined('ABSPATH'))
   exit;
 
-require_once 'skoorin-l10n.php';
-require_once 'skoorin-settings.php';
-require_once 'skoorin-api.php';
-require_once 'skoorin-results-table.php';
+require_once 'discgolfmetrix-l10n.php';
+require_once 'discgolfmetrix-settings.php';
+require_once 'discgolfmetrix-api.php';
+require_once 'discgolfmetrix-results-table.php';
 
-class Skoorin {
+class DiscGolfMetrix {
   function __construct($l10n) {
     $this->ver = '2.0.0';
-    $this->options = get_option('skoorin_options', Skoorin_Settings::get_default_options());
+    $this->options = get_option('discgolfmetrix_options', DiscGolfMetrix_Settings::get_default_options());
     $this->defaults = array(
       'shortcode_results' => array(
         'competition_id' => 0,
@@ -37,23 +37,23 @@ class Skoorin {
     $this->profile_link_icon_path = 'M340.254,214.706c14.96-14.142,13.867-45.041,1.742-55.538 c9.644-25.638,22.011-55.482,16.79-81.621c-6.405-32.045-51.91-43.413-88.934-43.413c-28.713,0-63.591,7.238-74.587,27.047 c-11.052,1.222-19.587,5.794-25.419,13.645c-16.068,21.695-5.092,55,2.815,83.991c-12.127,10.514-13.571,41.747,1.388,55.889 c2.055,29.399,19.438,47.412,27.565,54.316v44.579c-7.793,2.906-15.422,5.72-22.844,8.442 c-64.257,23.621-110.687,40.709-124.276,67.905C35.222,428.471,35,467.534,35,469.18c0,5.109,4.148,9.257,9.257,9.257h425.788 c5.109,0,9.257-4.148,9.257-9.257c0-1.646-0.222-40.709-19.494-79.232c-13.607-27.214-60.036-44.284-124.294-67.905 c-7.404-2.739-15.051-5.536-22.826-8.442v-44.579C320.815,262.099,338.199,244.105,340.254,214.706L340.254,214.706z';
     $this->l10n = $l10n['results'];
 
-    add_shortcode('skoorin_results', array($this, 'shortcode_results'));
-    add_shortcode('skoorin_registration_list', array($this, 'shortcode_registration_list'));
+    add_shortcode('discgolfmetrix_results', array($this, 'shortcode_results'));
+    add_shortcode('discgolfmetrix_registration_list', array($this, 'shortcode_registration_list'));
     add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_public'), 99);
   }
 
   function enqueue_scripts_public() {
-    if ($this->is_shortcode_in_post_content('skoorin_results')) {
-      wp_enqueue_style('skoorin-results', plugins_url('styles/skoorin-results.css', __FILE__), array(), $this->ver);
-      wp_enqueue_script('skoorin-results', plugins_url('scripts/skoorin-results.js', __FILE__), array('jquery'), $this->ver, true);
-      wp_localize_script('skoorin-results', 'skoorinResults', array(
+    if ($this->is_shortcode_in_post_content('discgolfmetrix_results')) {
+      wp_enqueue_style('discgolfmetrix-results', plugins_url('styles/discgolfmetrix-results.css', __FILE__), array(), $this->ver);
+      wp_enqueue_script('discgolfmetrix-results', plugins_url('scripts/discgolfmetrix-results.js', __FILE__), array('jquery'), $this->ver, true);
+      wp_localize_script('discgolfmetrix-results', 'discgolfmetrixResults', array(
         'l10n' => $this->l10n,
         'profile_link_icon_path' => $this->profile_link_icon_path,
         'ajax_url' => admin_url('admin-ajax.php')
       ));
     }
-    if ($this->is_shortcode_in_post_content('skoorin_registration_list'))
-      wp_enqueue_style('skoorin-registration-list', plugins_url('styles/skoorin-registration-list.css', __FILE__), array(), $this->ver);
+    if ($this->is_shortcode_in_post_content('discgolfmetrix_registration_list'))
+      wp_enqueue_style('discgolfmetrix-registration-list', plugins_url('styles/discgolfmetrix-registration-list.css', __FILE__), array(), $this->ver);
   }
 
   function is_shortcode_in_post_content($shortcode_key) {
@@ -77,19 +77,19 @@ class Skoorin {
     
     extract($this->options);
     $results_filter = json_decode($results_filter);
-    $filters = Skoorin_API::get(array(
+    $filters = DiscGolfMetrix_API::get(array(
       'content' => 'wordpress_filters',
       'competition_id' => $atts['competition_id']
     ));
-    $results = Skoorin_API::get(array(
+    $results = DiscGolfMetrix_API::get(array(
       'content' => 'result',
       'id' => $atts['competition_id']
     ));
     $is_api_query_error = function ($response) {
-      return is_array($response) && array_key_exists('error', $response);
+      return empty($response) || (is_array($response) && array_key_exists('error', $response));
     };
 
-    $output = "<div class='skoorin-results' data-competition-id='$atts[competition_id]'>";
+    $output = "<div class='discgolfmetrix-results' data-competition-id='$atts[competition_id]'>";
 
       if ($is_api_query_error($filters) || $is_api_query_error($results))
         return "$output<p class='error'>{$this->l10n['network_error']}</p></div>";
@@ -99,7 +99,7 @@ class Skoorin {
       /* filter */
       if (is_array($results_filter) && count($results_filter)) {
         $active_filter_found = false;
-        $output .= '<div class="skoorin-results-filter">';
+        $output .= '<div class="discgolfmetrix-results-filter">';
         foreach ($results_filter as $filter_name) {
           $output .= call_user_func(
             get_class()."::get_{$filter_name}_filter",
@@ -119,8 +119,8 @@ class Skoorin {
       /* results table */
       if (property_exists($results, 'Competition')) {
         $competition = $results->Competition;
-        $output .= "<div class='skoorin-results-table'><div class='skoorin-results-table-container'>";
-        $results_table = new Skoorin_Results_Table(
+        $output .= "<div class='discgolfmetrix-results-table'><div class='discgolfmetrix-results-table-container'>";
+        $results_table = new DiscGolfMetrix_Results_Table(
           $competition,
           $filters_state,
           $this->l10n,
@@ -131,7 +131,7 @@ class Skoorin {
       }
 
       /* data for js */
-      $output .= '<script type="application/json" class="skoorin-results-data">';
+      $output .= '<script type="application/json" class="discgolfmetrix-results-data">';
       $output .= json_encode(array(
         'filters_selected' => $results_filter,
         'filters' => $filters,
@@ -150,7 +150,7 @@ class Skoorin {
     if (!is_numeric($atts['competition_id']))
       return '';
     
-    $registration_list = Skoorin_API::get(array(
+    $registration_list = DiscGolfMetrix_API::get(array(
       'content' => 'registration_list_html',
       'id' => $atts['competition_id']
     ), 'html');
@@ -158,7 +158,7 @@ class Skoorin {
       return is_array($response) && array_key_exists('error', $response);
     };
 
-    $output = "<div class='skoorin-registration-list' data-competition-id='$atts[competition_id]'>";
+    $output = "<div class='discgolfmetrix-registration-list' data-competition-id='$atts[competition_id]'>";
       $output .= $is_api_query_error($registration_list)
         ? "$output<p class='error'>{$this->l10n['network_error']}</p>"
         : $registration_list;
@@ -238,8 +238,8 @@ class Skoorin {
 
     ob_start();
     ?>
-      <div class="skoorin-results-filter-control-select-competitions" data-name="competitions">
-        <div class="skoorin-select-competitions">
+      <div class="discgolfmetrix-results-filter-control-select-competitions" data-name="competitions">
+        <div class="discgolfmetrix-select-competitions">
           <div class="select">
             <div class="selected">
               <select>
@@ -291,7 +291,7 @@ class Skoorin {
 
     ob_start();
     ?>
-      <div class="skoorin-results-filter-control-select-players <?php echo $got_data ? '' : 'no-options' ?>" data-name="players">
+      <div class="discgolfmetrix-results-filter-control-select-players <?php echo $got_data ? '' : 'no-options' ?>" data-name="players">
         <select class="placeholder visible">
           <option>
             <?php echo !$is_any_selected
@@ -320,7 +320,7 @@ class Skoorin {
 
     ob_start();
     ?>
-      <div class="skoorin-results-filter-control-select-classes <?php echo $got_data ? '' : 'no-options' ?>" data-name="classes">
+      <div class="discgolfmetrix-results-filter-control-select-classes <?php echo $got_data ? '' : 'no-options' ?>" data-name="classes">
         <select name="classes">
           <option value="all" <?php if (!$selected) echo 'selected'; ?>><?php echo $l10n['all']['classes'] ?></option>
           <?php
@@ -339,7 +339,7 @@ class Skoorin {
 
     ob_start();
     ?>
-      <div class="skoorin-results-filter-control-select-groups <?php echo $got_data ? '' : 'no-options' ?>" data-name="groups">
+      <div class="discgolfmetrix-results-filter-control-select-groups <?php echo $got_data ? '' : 'no-options' ?>" data-name="groups">
         <select name="groups">
           <option value="all" <?php if (!$selected) echo 'selected'; ?>><?php echo $l10n['all']['groups'] ?></option>
           <?php
@@ -360,5 +360,5 @@ class Skoorin {
   }
 }
 
-global $skoorin;
-$skoorin = new Skoorin($skoorin_l10n);
+global $discgolfmetrix;
+$discgolfmetrix = new DiscGolfMetrix($discgolfmetrix_l10n);

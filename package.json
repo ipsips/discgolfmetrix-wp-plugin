@@ -1,5 +1,5 @@
 {
-  "name": "skoorin-wp-plugin",
+  "name": "discgolfmetrix-wp-plugin",
   "version": "2.0.0",
   "scripts": {
     "start": "gulp",
@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ipsips/skoorin-wp-plugin.git"
+    "url": "https://github.com/ipsips/discgolfmetrix-wp-plugin.git"
   },
   "devDependencies": {
     "autoprefixer": "^6.5.1",
@@ -30,6 +30,7 @@
     "gulp-postcss": "^6.2.0",
     "gulp-readme-to-markdown": "^0.2.0",
     "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^1.9.1",
     "gulp-util": "^3.0.7",
     "merge-stream": "^1.0.1",

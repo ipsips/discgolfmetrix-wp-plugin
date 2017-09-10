@@ -2,7 +2,7 @@
 if (!defined('ABSPATH'))
   exit;
 
-class Skoorin_Results_Table {
+class DiscGolfMetrix_Results_Table {
   function __construct($competition, $filters_state, $l10n, $profile_link_icon_path) {
     $this->competition = $competition;
     $this->filters_state = $filters_state;

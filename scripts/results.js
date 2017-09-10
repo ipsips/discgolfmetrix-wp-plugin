@@ -32,7 +32,7 @@ const reducers = {
         const gotCompetitionData = !!getDeepProp(action, 'response.Competition')
 
         if (!gotCompetitionData)
-          alert(window.skoorinResults.l10n.missing_data_error)
+          alert(window.discgolfmetrixResults.l10n.missing_data_error)
 
         return !gotCompetitionData
           ? state
@@ -44,7 +44,7 @@ const reducers = {
         const gotFilterData = !!getDeepProp(action, 'response.competitions')
 
         if (!gotFilterData)
-          alert(window.skoorinResults.l10n.missing_data_error)
+          alert(window.discgolfmetrixResults.l10n.missing_data_error)
 
         return !gotFilterData
           ? state
@@ -54,7 +54,7 @@ const reducers = {
           }
       case 'FETCH_RESULTS_ERR':
       case 'FETCH_FILTER_ERR':
-        alert(window.skoorinResults.l10n.network_error)
+        alert(window.discgolfmetrixResults.l10n.network_error)
       default:
         return state
     }
@@ -115,7 +115,7 @@ class Results {
 
     filtersSelected.forEach(name => {
       if (name != 'competitions') {
-        const container = this.el.querySelector(`.skoorin-results-filter-control-select-${name}`)
+        const container = this.el.querySelector(`.discgolfmetrix-results-filter-control-select-${name}`)
         const select = container.querySelector(`select[name="${name}"]`)
 
         this.filters[name] = { container, select }
@@ -142,7 +142,7 @@ class Results {
 
     if (!this.table)
       this.table = new ResultsTable(
-        this.el.querySelector('.skoorin-results-table'),
+        this.el.querySelector('.discgolfmetrix-results-table'),
         this.state,
         this.onCompetitionSelect
       )
@@ -151,7 +151,7 @@ class Results {
 
     if (!this.competitionSelect)
       this.competitionSelect = new SelectCompetition(
-        this.el.querySelector('.skoorin-select-competitions'),
+        this.el.querySelector('.discgolfmetrix-select-competitions'),
         this.onCompetitionSelect
       )
 
@@ -173,12 +173,12 @@ class Results {
     const selected = this.state.filters[name]
     const options = getDeepProp(this.state, ['data', 'filters', name])
     const container = <div class={{
-      [`skoorin-results-filter-control-select-${name}`]: 1,
+      [`discgolfmetrix-results-filter-control-select-${name}`]: 1,
       'no-options': !Array.isArray(options) || !options.length
       }}>
       <select name={name} on-change={this.onChangeFilter.bind(this, name)}>
         <option value="all" selected={selected == 'all'}>
-          {window.skoorinResults.l10n.all[name]}
+          {window.discgolfmetrixResults.l10n.all[name]}
         </option>
         {!Array.isArray(options) ? '' : options.map(option => {
           const value = name == 'groups'
@@ -257,14 +257,14 @@ class Results {
   }
 }
 
-const skoorinResults = document.querySelectorAll('.skoorin-results')
-for (let i = 0; i < skoorinResults.length; i++) {
+const discgolfmetrixResults = document.querySelectorAll('.discgolfmetrix-results')
+for (let i = 0; i < discgolfmetrixResults.length; i++) {
   let resultsData
   try {
-    resultsData = JSON.parse(skoorinResults[i].querySelector('.skoorin-results-data').innerHTML)
+    resultsData = JSON.parse(discgolfmetrixResults[i].querySelector('.discgolfmetrix-results-data').innerHTML)
   } catch(err) {
-    console.error('Could not parse results data. This could mean there was a network error when getting the data from Skoorin data API.\n', err)
+    console.error('Could not parse results data. This could mean there was a network error when getting the data from Disc Golf Metrix data API.\n', err)
     break
   }
-  new Results(skoorinResults[i], resultsData)
+  new Results(discgolfmetrixResults[i], resultsData)
 }

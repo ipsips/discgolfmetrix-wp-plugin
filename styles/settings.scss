@@ -3,12 +3,12 @@
 @import 'variables-and-mixins';
 @import 'results-filter';
 
-#skoorin-options {
+#discgolfmetrix-options {
   h4 {
     margin-bottom: .2em;
   }
 
-  .skoorin-results-filter {
+  .discgolfmetrix-results-filter {
     box-sizing: content-box;
     min-height: 28px;
     padding: 10px;
@@ -17,7 +17,7 @@
     background: white;
     @include disable-user-select;
 
-    +.skoorin-results-filter {
+    +.discgolfmetrix-results-filter {
       margin-top: 1em;
     }
   }
@@ -27,18 +27,18 @@
     line-height: inherit;
   }
 
-  .skoorin-select-competition,
+  .discgolfmetrix-select-competition,
   select {
     pointer-events: none;
   }
 
-  [class^="skoorin-results-filter-control"] {
+  [class^="discgolfmetrix-results-filter-control"] {
     cursor: grab;
   }
 }
 
 @media screen and (max-width: 782px) {
-  #skoorin-options select {
+  #discgolfmetrix-options select {
     height: auto;
     font-size: inherit;
   }
