@@ -121,7 +121,7 @@ export default class ResultsTable {
                                   <a
                                     className="profile-link"
                                     target="_blank"
-                                    href={`https://dgmtrx.com/?u=player_stat&player_user_id=${player.UserID}`}>
+                                    href={`https://discgolfmetrix.com/?u=player_stat&player_user_id=${player.UserID}`}>
                                     {h('span', { props: { innerHTML: profileIcon }})}
                                   </a>
                                 }
@@ -182,7 +182,7 @@ export default class ResultsTable {
                 {Competition.Events.map(event =>
                   <th><a
                     target="_blank"
-                    href={`https://dgmtrx.com/?u=player_stat&player_user_id=${event.ID}`}
+                    href={`https://discgolfmetrix.com/?u=player_stat&player_user_id=${event.ID}`}
                     on-click={evt => {
                       evt.preventDefault()
                       if (typeof this.onChange === 'function')
@@ -214,7 +214,7 @@ export default class ResultsTable {
                           ? player.Name
                           : <a
                               target="_blank"
-                              href={`https://dgmtrx.com/?u=player_stat&player_user_id=${player.UserID}`}
+                              href={`https://discgolfmetrix.com/?u=player_stat&player_user_id=${player.UserID}`}
                               >
                               {player.Name}
                             </a>

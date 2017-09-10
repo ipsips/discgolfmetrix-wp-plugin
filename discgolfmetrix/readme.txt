@@ -7,11 +7,11 @@ Stable tag: trunk
 License: Apache License 2.0
 License URI: https://www.apache.org/licenses/LICENSE-2.0.txt
 
-Embed dgmtrx.com content into wordpress
+Embed discgolfmetrix.com content into wordpress
 
 == Description ==
 
-Embed [dgmtrx.com](https://dgmtrx.com) content into wordpress using shortcodes `[discgolfmetrix_results]` and `[discgolfmetrix_registration_list]` providing a competition ID and optionally a preselected filter. Examples:
+Embed [discgolfmetrix.com](https://discgolfmetrix.com) content into wordpress using shortcodes `[discgolfmetrix_results]` and `[discgolfmetrix_registration_list]` providing a competition ID and optionally a preselected filter. Examples:
 
 ```
 [discgolfmetrix_results competition_id="999999"]

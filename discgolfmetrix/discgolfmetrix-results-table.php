@@ -9,8 +9,8 @@ class DiscGolfMetrix_Results_Table {
     $this->l10n = $l10n;
     $this->sub_competition_date_fmt = 'm/d/y H:i';
     $this->no_class_flag = '$___NO_CLASS';
-    $this->event_link_fmt = 'https://dgmtrx.com/?u=scorecard&ID=%s';
-    $this->profile_link_fmt = 'https://dgmtrx.com/?u=player_stat&player_user_id=%s';
+    $this->event_link_fmt = 'https://discgolfmetrix.com/?u=scorecard&ID=%s';
+    $this->profile_link_fmt = 'https://discgolfmetrix.com/?u=player_stat&player_user_id=%s';
     $this->profile_link_icon_path = $profile_link_icon_path;
   }
 
