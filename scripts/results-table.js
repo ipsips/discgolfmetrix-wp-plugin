@@ -121,7 +121,8 @@ export default class ResultsTable {
                                   <a
                                     className="profile-link"
                                     target="_blank"
-                                    href={`https://discgolfmetrix.com/?u=player_stat&player_user_id=${player.UserID}`}>
+                                    href={`https://discgolfmetrix.com/?u=player_stat&player_user_id=${player.UserID}`}
+                                    on-click={evt => evt.stopPropagation()}>
                                     {h('span', { props: { innerHTML: profileIcon }})}
                                   </a>
                                 }
