@@ -1,5 +1,5 @@
 === Disc Golf Metrix WP ===
-Contributors: ipsddd
+Contributors: ipsddd, markosaviauk
 Tags: discgolfmetrix
 Requires at least: 4.6
 Tested up to: 4.8
@@ -13,12 +13,12 @@ Embed discgolfmetrix.com content into wordpress
 
 Embed [discgolfmetrix.com](https://discgolfmetrix.com) content into wordpress using shortcodes `[discgolfmetrix_results]` and `[discgolfmetrix_registration_list]` providing a competition ID and optionally a preselected filter. Examples:
 
-```
+`
 [discgolfmetrix_results competition_id="999999"]
 [discgolfmetrix_results competition_id="999999" players="Firstname Lastname, John Doe"]
 [discgolfmetrix_results competition_id="999999" class="MPO"]
 [discgolfmetrix_registration_list competition_id="999999"]
-```
+`
 
 == Screenshots ==
 

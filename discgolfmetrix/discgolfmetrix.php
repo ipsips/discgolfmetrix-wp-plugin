@@ -4,8 +4,8 @@ Plugin Name:  Disc Golf Metrix
 Plugin URI:   http://discgolfmetrix.com
 Description:  Embed discgolfmetrix.com content into wordpress. Requires PHP ver 5.4 or higher
 Version:      2.0.0
-Author:       Ivar Oja
-Author URI:   http://ips.re
+Author:       Discgolfmetrix
+Author URI:   http://discgolfmetrix.com
 License:      Apache License 2.0
 License URI:  https://www.apache.org/licenses/LICENSE-2.0.txt
 Text Domain:  discgolfmetrix
